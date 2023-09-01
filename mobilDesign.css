@@ -1,0 +1,10 @@
+/* Design för mindre skärmar */
+
+/* ############################## */
+/* Placering av informationsrutor */
+/* ############################## */
+
+/* Samtliga informationsrutor */
+.center-column, .left-column, .right-column {
+  grid-column: 2/7;
+}

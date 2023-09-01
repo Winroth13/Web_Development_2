@@ -1,0 +1,77 @@
+/* Länkar till bilder */
+/* Bakgrundsbilden: https://unsplash.com/photos/yRsBZJuhbkk */
+/* Tillfälliga projektbilderna: https://freesvg.org/graphic-placeholder */
+
+/* Grundinställningar för hemsidan */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ############### */
+/* ### Grunden ### */
+/* ############### */
+
+/* Bakgrundsbild */
+body {
+  background-image: url("images/indexBackground.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+/* Grid design */
+.grid-container {
+  display: grid;
+  grid-template-columns: 10% 20% 10% 20% 10% 20% 10%;
+  row-gap: 20px;
+  margin-top: 20px;
+}
+
+/* ############## */
+/* Textrutedesign */
+/* ############## */
+
+/* Allmän design */
+.content-container {
+  background-color: #0099ff;
+  border-radius: 20px;
+  outline-style: solid;
+  font-family: sans-serif;
+  padding: 2%;
+}
+
+/* Titel */
+.header {
+  justify-content: center;
+  text-align: center;
+  padding: 5%;
+}
+
+/* Bilder */
+.content-container img {
+  width: 50%;
+  float: left;
+  padding-right: 5px;
+}
+
+/* Länkknappar */
+.content-container a {
+  background-color: #66ccff;
+  border-radius: 10px;
+  padding: 2%;
+  margin: 2% auto;
+  outline-style: solid;
+  text-decoration: none;
+  color: black;
+  font-size: large;
+  font-weight: bold;
+  display: block;
+  width: fit-content;
+}
+
+/* Hovrar över länkknappar */
+.content-container a:hover {
+  background-color: #0066cc;
+  color: #ffffff;
+}
