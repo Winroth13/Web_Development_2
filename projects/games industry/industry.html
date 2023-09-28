@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Svensk Dataspelsindustri</title>
+    <link rel="stylesheet" href="industry.css" />
+  </head>
+  <body>
+    <!-- Hela övre menyn -->
+    <div class="top-bar" id="top-bar">
+      <!-- Länkmeny-knappen och länkmenyn -->
+      <div class="top-menu">
+        <!-- Länkmeny-knappen -->
+        <button><h2>Länkar</h2></button>
+        <!-- Länkmenyn -->
+        <div class="top-links">
+          <!-- Länkar i länkmenyn -->
+          <a href="industry.html">Svensk Dataspelsindustri</a>
+          <a href="companies.html">Svenska Dataspelsföretag</a>
+          <a href="../../index.html">Projektcentrum</a>
+        </div>
+      </div>
+    </div>
+    <!-- Rubrik -->
+    <div class="flex-frame header">
+      <h1>Svensk Dataspelsindustri</h1>
+    </div>
+    <!-- Introduktion -->
+    <div class="flex-frame">
+      <p>
+        På denna sida så kommer du at hitta information om den svenska
+        datorspelsindustrin. Både om hur industrin ser ut idag och dess
+        utveckling. Om du vill läsa om några av Sveriges största
+        dataspelsföretag så kan du gör det <a href="companies.html">här</a>,
+        eller använda länkmenyn uppe i vänsta hörnet. Mer information om
+        industrin går också att hitta i den senaste utgåvan av
+        <a href="https://dataspelsbranschen.se/spelutvecklarindex">
+          spelutvecklarindex
+        </a>
+        som get us av Dataspelsbranchen, en organisation som samlar in och
+        årligen samanställer data om den svenska dataspelsindustrin.
+      </p>
+    </div>
+    <!-- Lista med information -->
+    <div class="flex-list">
+      <!-- Informationsruta #1 -->
+      <div class="flex-frame flex-container">
+        <!-- Bild till informationsruta #1 på mobil enhet -->
+        <img
+          src="../../images/datorspelsbranchenLogotyp.png"
+          alt="Dataspelsbranchens logotyp"
+          class="pictureMobileShow"
+        />
+        <div class="information-box">
+          <!-- Rubrik i informationsruta #1 -->
+          <h2>Dagens industri</h2>
+          <!-- Information i informationsruta #1 -->
+          <p>
+            Den svenska dataspelsbranchen har omkring 19 000 anställda, varav 8
+            000 av dem är i Sverige, och en omsättning på 58,9 miljarder kronor
+            utspritt över 785 aktiva företag. Detta gör svenskutvecklade
+            dataspel till 4,1% av den svenska tjänsteexporten. Jämfört med andra
+            länder i Europa så är Sverige det tredje största landet sett till
+            antalet datalspelsföretag och femta största sett till antalet
+            anställda inom landet.
+          </p>
+        </div>
+        <!-- Bild till informationsruta #1 -->
+        <img
+          src="../../images/datorspelsbranchenLogotyp.png"
+          alt="Dataspelsbranchens logotyp"
+          class="pictureMobileHide"
+        />
+      </div>
+      <!-- Informationsruta #2 -->
+      <div class="flex-frame flex-container">
+        <!-- Bild till informationsruta #2 -->
+        <img
+          src="../../images/spelutvecklarindex.png"
+          alt="Spelutvecklarindex 2022 utgiven av Dataspelsbranchen"
+          class="img-left"
+        />
+        <div class="information-box">
+          <!-- Rubrik i informationsruta #2 -->
+          <h2>Industrins utveckling</h2>
+          <!-- Information i informationsruta #2 -->
+          <p>
+            Industrin har växt väldigt snabbt, dess omsättning har ökat med över
+            25% varje år under de senaste åren, vilket skulle räknas som ett
+            guldår för vilken annan industi som helst. Antalet anställda inom
+            industrin i Sverige ökade också med 20% mellan 2020 och 2021, och
+            anledningen att det inte har ökat mer är att det är svårt att få tag
+            på ny personal att anställa. Detta har lett till att företagen har
+            expanderat mer utomlands.
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+  <!-- Gör så att den övre menyn försvinner när man går ner på sidan
+    och kommer tillbaka när man börjar gå upp. -->
+  <script>
+    var prevScrollpos = window.pageYOffset;
+    window.onscroll = function () {
+      var currentScrollPos = window.pageYOffset;
+      if (prevScrollpos > currentScrollPos) {
+        document.getElementById("top-bar").style.top = "0";
+      } else {
+        document.getElementById("top-bar").style.top = "-60px";
+      }
+      prevScrollpos = currentScrollPos;
+    };
+  </script>
+</html>

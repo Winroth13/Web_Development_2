@@ -1,0 +1,134 @@
+/* Standard för hela sidan */
+* {
+  box-sizing: border-box;
+  color: white;
+  font-family: sans-serif;
+}
+
+/* Bakgrunden */
+body {
+  background-color: #181b26;
+}
+
+/* ---------------------- */
+/* Allt om den övre menyn */
+/* ---------------------- */
+
+/* Övre menyn */
+.top-bar {
+  position: fixed;
+  background-color: black;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  transition: 0.3s;
+}
+
+/* Menyknappen */
+.top-bar button {
+  padding: 0px 60px;
+  text-align: center;
+  float: left;
+  cursor: pointer;
+  background-color: black;
+}
+
+/* Länkmenyns utseende */
+.top-links {
+  position: fixed;
+  background-color: black;
+  z-index: 1;
+  display: none;
+  margin-top: 60px;
+}
+
+/* Länkarnas utseende */
+.top-links a {
+  text-decoration: none;
+  display: block;
+  padding: 12px 16px;
+}
+
+/* Ändrar färgen på länkmeny-knappen när man hovrar över den eller länkmenyn.*/
+.top-menu:hover button {
+  background-color: #181b26;
+}
+
+/* Visar länkmenyn när man hovrar över länkmeny-knappen. */
+.top-menu:hover .top-links {
+  display: block;
+}
+
+/* Ändrar färgen på länken när man hovrar över. */
+.top-links a:hover {
+  background-color: #2a2a2a;
+}
+
+/* --------------- */
+/* Hemsidans kropp */
+/* --------------- */
+
+/* Allmän design */
+.flex-frame {
+  display: flex;
+  width: 35%;
+  margin-left: 32.5%;
+  margin-top: 2%;
+  align-items: center;
+}
+
+/* Rubrik */
+.header {
+  margin-top: 60px;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Lista med företag */
+.flex-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+/* Företagsrutor */
+.flex-container {
+  margin-left: 10%;
+  flex-direction: column;
+}
+
+/* Bilder */
+img {
+  width: 40%;
+  float: left;
+  padding-right: 5px;
+}
+
+/* Ord med informationsruta. */
+span {
+  position: relative;
+  text-decoration: underline;
+}
+
+/* Informationsrutan som synns när man hovrar över ordet. */
+span:hover::after {
+  position: absolute;
+  bottom: 100%;
+  left: -5vw;
+  width: 20vmax;
+  display: block;
+  padding: 5px;
+  background: black;
+  content: attr(name);
+}
+
+/*Anpassning till mindre skärmar*/
+@media (max-width: 800px) {
+  .flex-frame {
+    width: 70%;
+    margin-left: 15%;
+  }
+  .flex-container {
+    flex-direction: column;
+  }
+}

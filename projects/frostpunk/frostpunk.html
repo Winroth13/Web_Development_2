@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frostpunk Startpage</title>
+    <link rel="stylesheet" href="frostpunk.css">
+    <link
+      href="../../node_modules/lightbox2/dist/css/lightbox.css"
+      rel="stylesheet"
+    >
+    <script src="../../node_modules/lightbox2/dist/js/lightbox-plus-jquery.js"></script>
+    <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
+  </head>
+  <body>
+    <!-- Hela övre menyn -->
+    <div class="top-bar" id="top-bar">
+      <!-- Länkmeny-knappen och länkmenyn -->
+      <div class="top-menu">
+        <!-- Länkmeny-knappen -->
+        <button>Links</button>
+        <!-- Länkmenyn -->
+        <div class="top-links">
+          <!-- Länkar i länkmenyn -->
+          <a href="frostpunk.html">Frostpunk Startpage</a>
+          <a href="scenarios.html">Frostpunk Scenarios</a>
+          <a href="../../index.html">Projectcenter</a>
+        </div>
+      </div>
+    </div>
+    <!-- Allmän informtaionsruta -->
+    <div class="flex-frame top-container">
+      <p>
+        Frostpunk is a survival city builder where you take the place of the
+        ruler of the last city on Earth. It is your duty to lead the city by
+        enacting laws and making decisions as well as planning the city's
+        infrastructure. What will you do to keep the generator, the hearth of
+        your city, running? But bevare, if the discontent gets too high, or the
+        hope stoops too low, you may not be long for this world. Learn more
+        about the different scenarios <a href="scenarios.html">here</a>.
+      </p>
+    </div>
+    <!-- Informationsruta #1 -->
+    <div class="flex-frame flex-container">
+      <!-- Titel till informationsruta #1 -->
+      <h2>Ruling the city</h2>
+      <div class="container-structure">
+        <!-- Bild till informationsruta #1 -->
+        <div class="image-container">
+          <a href="images/labourLaws.png" data-lightbox="image-1"
+            ><img
+              src="images/labourLawsSmall.png"
+              alt="A picture of an event caused by workplace accident."
+          ></a>
+        </div>
+        <!-- Text i informationsruta #1 -->
+        <p class="text-container">
+          As the ruler of the city, you need to see to the needs of your
+          citizens. They all need to be feed or they will starve, but the
+          quality of the food can vary. The lower the quality the more
+          discontent and less hope, but at least they will stay alive. But that
+          is not the only thing your citizens needs. Your citizens also need
+          heat and housing, or otherwise they will get sick in the cold,
+          unforgiving world that you find yourslef in. You also need to enact
+          new laws that lets your city adapt to the frozen wasteland, but they
+          all come with their downsides. You are also going to have to make
+          vitals decisions that are going to affect the whole city. But no
+          matter what happens: The city must survive.
+        </p>
+      </div>
+    </div>
+    <!-- Informationsruta #2 -->
+    <div class="flex-frame flex-container">
+      <!-- Titel till informationsruta #2 -->
+      <h2>Expanding your city</h2>
+      <div class="container-structure">
+        <!-- Bild till informationsruta #2 -->
+        <div class="image-container reverse-image">
+          <a href="images/exploration.png" data-lightbox="image-2"
+            ><img
+              src="images/explorationSmall.png"
+              alt="A picture of the exploration map."
+          ></a>
+        </div>
+        <!-- Text i informationsruta #2 -->
+        <p class="text-container reverse-text">
+          You need to expand you city in order for it to survive. To do this,
+          you not only need to expand the city's infrastructure, but also
+          research new technologies and explore the wasteland for any supplies
+          you can harvest. Researching new technologies will unlock new ways to
+          tackle the frozen winds and are vital for survival. Exploring the
+          wasteland will let you uncover what is left of the old world, and will
+          let you make decisions that can bring in rare resources or lead to the
+          demise of your explorers.
+        </p>
+      </div>
+    </div>
+    <!-- Lista med bilder från spelet -->
+    <div class="flex-frame image-list">
+      <a href="images/frostpunkCity.png" data-lightbox="image-list"
+        ><img src="images/frostpunkCitySmall.png" alt="Picture of a city."
+      ></a>
+      <a href="images/purpose.png" data-lightbox="image-list"
+        ><img
+          src="images/purposeSmall.png"
+          alt="Picture of law tree named Purpose."
+      ></a>
+      <a href="images/frostpunkCloseCity.png" data-lightbox="image-list"
+        ><img
+          src="images/frostpunkCloseCitySmall.png"
+          alt="Close up picture of a city."
+      ></a>
+      <a href="images/propagandaCenter.png" data-lightbox="image-list"
+        ><img
+          src="images/propagandaCenterSmall.png"
+          alt="A picture of a propaganda center."
+      ></a>
+      <a href="images/frostpunkFarCity.png" data-lightbox="image-list"
+        ><img
+          src="images/frostpunkFarCitySmall.png"
+          alt="Far away picture of a city."
+      ></a>
+      <a href="images/choosePath.png" data-lightbox="image-list"
+        ><img
+          src="images/choosePathSmall.png"
+          alt="A picture of two paths to choose between."
+      ></a>
+    </div>
+    <!-- Kontaktruta -->
+    <footer id="footer">
+      <ul>
+        <!-- Titel till kontaktrutan -->
+        <li><h2>Contact information</h2></li>
+        <!-- Text i kontaktruta -->
+        <li><strong>Is there something you are wondering about?</strong></li>
+        <li><strong>Contact me:</strong></li>
+        <!-- Länk till mejl -->
+        <li>
+          <a href="mailto:emil.winroth@elev.ga.ntig.se"
+            >emil.winroth@elev.ga.ntig.se</a
+          >
+        </li>
+      </ul>
+    </footer>
+    <!-- Gör så att den övre menyn försvinner när man går ner på sidan
+        och kommer tillbaka när man börjar gå upp. -->
+    <script>
+      var prevScrollpos = window.pageYOffset;
+      window.onscroll = function () {
+        var currentScrollPos = window.pageYOffset;
+        if (prevScrollpos < currentScrollPos && currentScrollPos > 0) {
+          document.getElementById("top-bar").style.top = "-60px";
+        } else {
+          document.getElementById("top-bar").style.top = "0px";
+        }
+        prevScrollpos = currentScrollPos;
+      };
+    </script>
+  </body>
+</html>

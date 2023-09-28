@@ -1,0 +1,209 @@
+/* Allmänt på hermsidan */
+* {
+  box-sizing: border-box;
+}
+
+/* Bakgrunden */
+body {
+  background-image: url("images/frostpunkBackground.jfif");
+  background-attachment: top;
+  background-repeat: no-repeat;
+  background-size: 100vw;
+  background-color: #1b1b20;
+}
+
+/* ---------------------- */
+/* Allt om den övre menyn */
+/* ---------------------- */
+
+/* Övre menyn */
+.top-bar {
+  position: fixed;
+  background-color: black;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  transition: 0.3s;
+}
+
+/* Menyknappen */
+.top-bar button {
+  padding: 13.5px 60px;
+  text-align: center;
+  float: left;
+  cursor: pointer;
+  background-color: black;
+  color: white;
+  font-size: 26px;
+}
+
+/* Länkmenyns utseende */
+.top-links {
+  position: fixed;
+  background-color: black;
+  z-index: 1;
+  display: none;
+  margin-top: 60px;
+}
+
+/* Länkarnas utseende */
+.top-links a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  padding: 12px 16px;
+}
+
+/* Ändrar färgen på länkmeny-knappen när man hovrar över den eller länkmenyn.*/
+.top-menu:hover button {
+  background-color: #191b1e;
+}
+
+/* Visar länkmenyn när man hovrar över länkmeny-knappen. */
+.top-menu:hover .top-links {
+  display: block;
+}
+
+/* Ändrar färgen på länken när man hovrar över. */
+.top-links a:hover {
+  background-color: #2a2a2a;
+}
+
+/* --------------- */
+/* Hemsidans kropp */
+/* --------------- */
+
+/* Allmän design */
+.flex-frame {
+  display: flex;
+  margin-top: 5%;
+  align-items: center;
+}
+
+/* Översta rutan */
+.top-container {
+  margin-top: 120vh;
+  text-align: center;
+  width: 35%;
+  margin-left: 32.5%;
+  box-shadow: 0px 0px 20px #ebf1f1;
+  background-color: #a9ccd2;
+  border-radius: 25px;
+  padding: 0px 15px;
+}
+
+/* Alla andra rutor */
+.flex-container {
+  padding: 0px 15px 15px;
+  margin-left: 10%;
+  width: 80%;
+  flex-direction: column;
+  box-shadow: 0px 0px 20px #ebf1f1;
+  background-color: #a9ccd2;
+  border-radius: 25px;
+}
+
+/* Inuti rutorna */
+.container-structure {
+  flex-wrap: wrap;
+}
+
+/* Texten inuti rutorna */
+.text-container {
+  width: 58%;
+  float: left;
+}
+
+/* Texten i rutor med text på höger sida */
+.reverse-text {
+  float: right;
+  margin-left: 2%;
+}
+
+/* Alla bilder intuti rutorna */
+.image-container > a > img {
+  float: right;
+  width: 40%;
+}
+
+/* Bilderna i rutor med bilder till vänster */
+.reverse-image > a > img {
+  float: left;
+}
+
+/* Lista med bilder */
+.image-list {
+  margin-left: 10%;
+  width: 80%;
+  flex-wrap: wrap;
+}
+
+/* Höljet till bilderna i listan med bilder */
+.image-list > a {
+  width: 33.33%;
+}
+
+/* Bilderna i listan med bilder */
+.image-list > a > img {
+  width: 100%;
+}
+
+/* ------------------------------ */
+/* Kontaktrutan och dess innehåll */
+/* ------------------------------ */
+
+/* Kontaktruta */
+footer {
+  display: flex;
+  position: static;
+  background-color: rgb(20, 20, 20);
+  justify-content: center;
+  align-items: center;
+  margin: 5% -8px -8px -8px;
+  color: white;
+}
+
+/* Inehåll i kontaktruta */
+footer ul {
+  list-style-type: none;
+  padding: 0% 0% 2% 0%;
+  text-align: center;
+}
+
+/* Kontaktlänk */
+footer ul li a {
+  color: aquamarine;
+}
+
+/* ---------------------------- */
+/* Anpassning till skärmstorlek */
+/* ---------------------------- */
+
+/* Anpassning till mindre skärmar */
+@media (orientation: portrait) {
+  .image-list > a {
+    width: 50%;
+  }
+  body {
+    background-size: 200vh;
+    background-position: top;
+  }
+  .flex-frame {
+    margin-top: 10%;
+  }
+  .flex-container {
+    padding: 0px 15px;
+  }
+  .top-container {
+    margin-left: 10%;
+    width: 80%;
+    margin-top: 120vh;
+  }
+  .image-container > a > img {
+    width: 100%;
+  }
+  .text-container {
+    width: 100%;
+    float: left;
+  }
+}
