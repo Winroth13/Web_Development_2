@@ -5,8 +5,6 @@ const ctx = canvas.getContext("2d")!;
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
-console.log("Test");
-
 type Velocity = {
   x: number;
   y: number;
