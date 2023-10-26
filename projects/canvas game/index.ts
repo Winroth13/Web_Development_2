@@ -1,22 +1,15 @@
 const canvas = document.querySelector("canvas")!;
-console.log(canvas);
 
 const ctx = canvas.getContext("2d")!;
 
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
+console.log("Test");
+
 type Velocity = {
   x: number;
   y: number;
-};
-
-type test = {
-  x: number;
-  y: number;
-  radius: number;
-  colour: string;
-  velocity: Velocity;
 };
 
 class Player {
@@ -117,7 +110,7 @@ function animate() {
     }
   });
   // 1:02:??
-  enemies.forEach((enemy: Enemy, enemyIndex) => {
+  enemies.forEach((enemy, enemyIndex) => {
     enemy.update();
 
     const distance = Math.hypot(player.x - enemy.x, player.y - enemy.y);
@@ -126,7 +119,7 @@ function animate() {
       cancelAnimationFrame(animationID);
     }
 
-    projectiles.forEach((projectile: Projectile, projectileIndex) => {
+    projectiles.forEach((projectile, projectileIndex) => {
       const distance = Math.hypot(
         projectile.x - enemy.x,
         projectile.y - enemy.y
