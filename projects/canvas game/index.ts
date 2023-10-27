@@ -5,6 +5,11 @@ const ctx = canvas.getContext("2d")!;
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
+const centerX = canvas.width / 2;
+const centerY = canvas.height / 2;
+
+const projectileSpeed: number = 5;
+
 type Velocity = {
   x: number;
   y: number;
@@ -52,12 +57,32 @@ class Projectile extends Player {
   }
 }
 
-class Enemy extends Projectile {}
+class Enemy extends Projectile {
+  minRadius: number;
 
-const centerX = canvas.width / 2;
-const centerY = canvas.height / 2;
+  constructor(
+    x: number,
+    y: number,
+    radius: number,
+    colour: string,
+    velocity: Velocity
+  ) {
+    super(x, y, radius, colour, velocity);
+    this.minRadius = this.radius;
+  }
 
-const player = new Player(centerX, centerY, 30, "blue");
+  update() {
+    if (this.radius > this.minRadius) {
+      this.radius -= 1;
+    }
+
+    this.draw();
+    this.x += this.velocity.x;
+    this.y += this.velocity.y;
+  }
+}
+
+const player = new Player(centerX, centerY, 10, "white");
 
 const projectiles: Projectile[] = [];
 const enemies: Enemy[] = [];
@@ -77,7 +102,7 @@ function spawnEnemies() {
       y = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
     }
 
-    const colour = "green";
+    const colour = `hsl(${Math.floor(Math.random() * 360)}, 50%, 50%)`;
 
     const angle = Math.atan2(centerY - y, centerX - x);
 
@@ -93,10 +118,12 @@ function spawnEnemies() {
 let animationID: number;
 function animate() {
   animationID = requestAnimationFrame(animate);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   player.draw();
 
-  projectiles.forEach((projectile) => {
+  // Porjectiles flying off the screen
+  projectiles.forEach((projectile, projectileIndex) => {
     projectile.update();
 
     if (
@@ -105,9 +132,13 @@ function animate() {
       projectile.y + projectile.radius < 0 ||
       projectile.y - projectile.radius > canvas.height
     ) {
+      setTimeout(() => {
+        projectiles.splice(projectileIndex, 1);
+      }, 0);
     }
   });
-  // 1:02:??
+
+  // Enemy touching player
   enemies.forEach((enemy, enemyIndex) => {
     enemy.update();
 
@@ -117,6 +148,7 @@ function animate() {
       cancelAnimationFrame(animationID);
     }
 
+    // Enemy touching projectile
     projectiles.forEach((projectile, projectileIndex) => {
       const distance = Math.hypot(
         projectile.x - enemy.x,
@@ -124,8 +156,14 @@ function animate() {
       );
 
       if (distance - enemy.radius - projectile.radius < 0) {
+        if (enemy.minRadius > 20) {
+          enemy.minRadius -= 10;
+        } else {
+          setTimeout(() => {
+            enemies.splice(enemyIndex, 1);
+          }, 0);
+        }
         setTimeout(() => {
-          enemies.splice(enemyIndex, 1);
           projectiles.splice(projectileIndex, 1);
         }, 0);
       }
@@ -137,15 +175,14 @@ addEventListener("click", (event) => {
   const angle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
 
   const velocity = {
-    x: Math.cos(angle),
-    y: Math.sin(angle),
+    x: Math.cos(angle) * projectileSpeed,
+    y: Math.sin(angle) * projectileSpeed,
   };
 
-  projectiles.push(new Projectile(centerX, centerY, 5, "red", velocity));
+  projectiles.push(new Projectile(centerX, centerY, 5, "white", velocity));
 });
 
 animate();
 spawnEnemies();
 
 // https://www.youtube.com/watch?v=eI9idPTT0c4
-// 35:00
