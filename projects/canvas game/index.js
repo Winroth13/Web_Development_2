@@ -17,9 +17,15 @@ var canvas = document.querySelector("canvas");
 var ctx = canvas.getContext("2d");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
+var scoreDisplay = document.querySelector("#scoreDisplay");
+var scoreElement = document.querySelector("#scoreElement");
+var gameOverDisplay = document.querySelector("#gameOverDisplay");
+var startGameButton = document.querySelector("#startGameButton");
+var finalScoreElement = document.querySelector("#finalScoreElement");
 var centerX = canvas.width / 2;
 var centerY = canvas.height / 2;
 var projectileSpeed = 5;
+var particleFriction = 0.98;
 var Player = /** @class */ (function () {
     function Player(x, y, radius, colour) {
         this.x = x;
@@ -66,9 +72,44 @@ var Enemy = /** @class */ (function (_super) {
     };
     return Enemy;
 }(Projectile));
+var Particle = /** @class */ (function (_super) {
+    __extends(Particle, _super);
+    function Particle(x, y, radius, colour, velocity) {
+        var _this = _super.call(this, x, y, radius, colour, velocity) || this;
+        _this.alpha = 1;
+        return _this;
+    }
+    Particle.prototype.draw = function () {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        ctx.fillStyle = this.colour;
+        ctx.fill();
+        ctx.restore();
+    };
+    Particle.prototype.update = function () {
+        this.draw();
+        this.velocity.x *= particleFriction;
+        this.velocity.y *= particleFriction;
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+        this.alpha -= 0.01;
+    };
+    return Particle;
+}(Projectile));
 var player = new Player(centerX, centerY, 10, "white");
 var projectiles = [];
 var enemies = [];
+var particles = [];
+// Whenever a new game starts
+function inti() {
+    projectiles = [];
+    enemies = [];
+    particles = [];
+    score = 0;
+    scoreElement.innerHTML = score.toString();
+}
 function spawnEnemies() {
     setInterval(function () {
         var radius = 10 + Math.random() * 20;
@@ -91,13 +132,15 @@ function spawnEnemies() {
         enemies.push(new Enemy(x, y, radius, colour, velocity));
     }, 1000);
 }
-var animationID;
-function animate() {
-    animationID = requestAnimationFrame(animate);
-    ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    player.draw();
-    // Porjectiles flying off the screen
+function updateParticles() {
+    particles.forEach(function (particle, index) {
+        particle.update();
+        if (particle.alpha <= 0) {
+            particles.splice(index, 1);
+        }
+    });
+}
+function projectilesOffScreen() {
     projectiles.forEach(function (projectile, projectileIndex) {
         projectile.update();
         if (projectile.x + projectile.radius < 0 ||
@@ -109,40 +152,83 @@ function animate() {
             }, 0);
         }
     });
-    // Enemy touching player
-    enemies.forEach(function (enemy, enemyIndex) {
-        enemy.update();
-        var distance = Math.hypot(player.x - enemy.x, player.y - enemy.y);
-        if (distance - enemy.radius - player.radius < 0) {
-            cancelAnimationFrame(animationID);
-        }
-        // Enemy touching projectile
-        projectiles.forEach(function (projectile, projectileIndex) {
-            var distance = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
-            if (distance - enemy.radius - projectile.radius < 0) {
-                if (enemy.minRadius > 20) {
-                    enemy.minRadius -= 10;
-                }
-                else {
-                    setTimeout(function () {
-                        enemies.splice(enemyIndex, 1);
-                    }, 0);
-                }
+}
+function enemyHittingPlayer(enemy) {
+    var distance = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+    // End game
+    if (distance - enemy.radius - player.radius < 0) {
+        cancelAnimationFrame(animationID);
+        gameOverDisplay.style.display = "flex";
+        finalScoreElement.innerHTML = score.toString();
+        scoreDisplay.style.display = "none";
+        removeEventListener("click", createProjectile);
+    }
+}
+function enemyProjectileCollision(enemy, enemyIndex) {
+    projectiles.forEach(function (projectile, projectileIndex) {
+        var distance = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
+        if (distance - enemy.radius - projectile.radius < 0) {
+            //Increase score
+            score += 1;
+            scoreElement.innerHTML = score.toString();
+            //Create explosion
+            for (var i = 0; i < enemy.radius * 2; i++) {
+                particles.push(new Particle(projectile.x, projectile.y, Math.random() * 2, enemy.colour, {
+                    x: (Math.random() - 0.5) * (Math.random() * 6),
+                    y: (Math.random() - 0.5) * (Math.random() * 6),
+                }));
+            }
+            // Shrink enemy
+            if (enemy.minRadius > 20) {
+                enemy.minRadius -= 10;
+            }
+            else {
                 setTimeout(function () {
-                    projectiles.splice(projectileIndex, 1);
+                    enemies.splice(enemyIndex, 1);
                 }, 0);
             }
-        });
+            setTimeout(function () {
+                projectiles.splice(projectileIndex, 1);
+            }, 0);
+        }
     });
 }
-addEventListener("click", function (event) {
+var animationID;
+var score = 0;
+function animate() {
+    animationID = requestAnimationFrame(animate);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    player.draw();
+    // Particles
+    updateParticles();
+    // Porjectiles flying off the screen
+    projectilesOffScreen();
+    // Alla enemies
+    enemies.forEach(function (enemy, enemyIndex) {
+        enemy.update();
+        // Enemy hitting player
+        enemyHittingPlayer(enemy);
+        // Enemy touching projectile
+        enemyProjectileCollision(enemy, enemyIndex);
+    });
+}
+function createProjectile(event) {
     var angle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
+    console.log("object");
     var velocity = {
         x: Math.cos(angle) * projectileSpeed,
         y: Math.sin(angle) * projectileSpeed,
     };
     projectiles.push(new Projectile(centerX, centerY, 5, "white", velocity));
+}
+startGameButton.addEventListener("click", function () {
+    gameOverDisplay.style.display = "none";
+    scoreDisplay.style.display = "block";
+    inti();
+    animate();
+    spawnEnemies();
+    setTimeout(function () {
+        addEventListener("click", createProjectile);
+    }, 0);
 });
-animate();
-spawnEnemies();
-// https://www.youtube.com/watch?v=eI9idPTT0c4

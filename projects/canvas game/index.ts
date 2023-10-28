@@ -1,14 +1,22 @@
 const canvas = document.querySelector("canvas")!;
-
 const ctx = canvas.getContext("2d")!;
 
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
+const scoreDisplay = document.querySelector<HTMLElement>("#scoreDisplay")!;
+const scoreElement = document.querySelector("#scoreElement")!;
+
+const gameOverDisplay =
+  document.querySelector<HTMLElement>("#gameOverDisplay")!;
+const startGameButton = document.querySelector("#startGameButton")!;
+const finalScoreElement = document.querySelector("#finalScoreElement")!;
+
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 
 const projectileSpeed: number = 5;
+const particleFriction: number = 0.98;
 
 type Velocity = {
   x: number;
@@ -82,10 +90,57 @@ class Enemy extends Projectile {
   }
 }
 
+class Particle extends Projectile {
+  alpha: number;
+
+  constructor(
+    x: number,
+    y: number,
+    radius: number,
+    colour: string,
+    velocity: Velocity
+  ) {
+    super(x, y, radius, colour, velocity);
+    this.alpha = 1;
+  }
+
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    ctx.fillStyle = this.colour;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  update() {
+    this.draw();
+
+    this.velocity.x *= particleFriction;
+    this.velocity.y *= particleFriction;
+
+    this.x += this.velocity.x;
+    this.y += this.velocity.y;
+
+    this.alpha -= 0.01;
+  }
+}
+
 const player = new Player(centerX, centerY, 10, "white");
 
-const projectiles: Projectile[] = [];
-const enemies: Enemy[] = [];
+let projectiles: Projectile[] = [];
+let enemies: Enemy[] = [];
+let particles: Particle[] = [];
+
+// Whenever a new game starts
+function inti() {
+  projectiles = [];
+  enemies = [];
+  particles = [];
+  score = 0;
+  scoreElement.innerHTML = score.toString();
+}
 
 function spawnEnemies() {
   setInterval(() => {
@@ -115,14 +170,16 @@ function spawnEnemies() {
   }, 1000);
 }
 
-let animationID: number;
-function animate() {
-  animationID = requestAnimationFrame(animate);
-  ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  player.draw();
+function updateParticles() {
+  particles.forEach((particle, index) => {
+    particle.update();
+    if (particle.alpha <= 0) {
+      particles.splice(index, 1);
+    }
+  });
+}
 
-  // Porjectiles flying off the screen
+function projectilesOffScreen() {
   projectiles.forEach((projectile, projectileIndex) => {
     projectile.update();
 
@@ -137,42 +194,91 @@ function animate() {
       }, 0);
     }
   });
+}
 
-  // Enemy touching player
-  enemies.forEach((enemy, enemyIndex) => {
-    enemy.update();
+function enemyHittingPlayer(enemy: Enemy) {
+  const distance = Math.hypot(player.x - enemy.x, player.y - enemy.y);
 
-    const distance = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+  // End game
+  if (distance - enemy.radius - player.radius < 0) {
+    cancelAnimationFrame(animationID);
+    gameOverDisplay.style.display = "flex";
+    finalScoreElement.innerHTML = score.toString();
+    scoreDisplay.style.display = "none";
+    removeEventListener("click", createProjectile);
+  }
+}
 
-    if (distance - enemy.radius - player.radius < 0) {
-      cancelAnimationFrame(animationID);
-    }
+function enemyProjectileCollision(enemy: Enemy, enemyIndex: number) {
+  projectiles.forEach((projectile, projectileIndex) => {
+    const distance = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
 
-    // Enemy touching projectile
-    projectiles.forEach((projectile, projectileIndex) => {
-      const distance = Math.hypot(
-        projectile.x - enemy.x,
-        projectile.y - enemy.y
-      );
+    if (distance - enemy.radius - projectile.radius < 0) {
+      //Increase score
+      score += 1;
+      scoreElement.innerHTML = score.toString();
 
-      if (distance - enemy.radius - projectile.radius < 0) {
-        if (enemy.minRadius > 20) {
-          enemy.minRadius -= 10;
-        } else {
-          setTimeout(() => {
-            enemies.splice(enemyIndex, 1);
-          }, 0);
-        }
+      //Create explosion
+      for (let i = 0; i < enemy.radius * 2; i++) {
+        particles.push(
+          new Particle(
+            projectile.x,
+            projectile.y,
+            Math.random() * 2,
+            enemy.colour,
+            {
+              x: (Math.random() - 0.5) * (Math.random() * 6),
+              y: (Math.random() - 0.5) * (Math.random() * 6),
+            }
+          )
+        );
+      }
+
+      // Shrink enemy
+      if (enemy.minRadius > 20) {
+        enemy.minRadius -= 10;
+      } else {
         setTimeout(() => {
-          projectiles.splice(projectileIndex, 1);
+          enemies.splice(enemyIndex, 1);
         }, 0);
       }
-    });
+      setTimeout(() => {
+        projectiles.splice(projectileIndex, 1);
+      }, 0);
+    }
   });
 }
 
-addEventListener("click", (event) => {
+let animationID: number;
+let score: number = 0;
+function animate() {
+  animationID = requestAnimationFrame(animate);
+  ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  player.draw();
+
+  // Particles
+  updateParticles();
+
+  // Porjectiles flying off the screen
+  projectilesOffScreen();
+
+  // Alla enemies
+  enemies.forEach((enemy, enemyIndex) => {
+    enemy.update();
+
+    // Enemy hitting player
+    enemyHittingPlayer(enemy);
+
+    // Enemy touching projectile
+    enemyProjectileCollision(enemy, enemyIndex);
+  });
+}
+
+function createProjectile(event: MouseEvent) {
   const angle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
+
+  console.log("object");
 
   const velocity = {
     x: Math.cos(angle) * projectileSpeed,
@@ -180,9 +286,15 @@ addEventListener("click", (event) => {
   };
 
   projectiles.push(new Projectile(centerX, centerY, 5, "white", velocity));
+}
+
+startGameButton.addEventListener("click", () => {
+  gameOverDisplay.style.display = "none";
+  scoreDisplay.style.display = "block";
+  inti();
+  animate();
+  spawnEnemies();
+  setTimeout(() => {
+    addEventListener("click", createProjectile);
+  }, 0);
 });
-
-animate();
-spawnEnemies();
-
-// https://www.youtube.com/watch?v=eI9idPTT0c4

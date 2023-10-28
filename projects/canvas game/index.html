@@ -7,13 +7,19 @@
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
+    <div class="score-display" id="scoreDisplay">
+      <span>Score: </span><span id="scoreElement">0</span>
+    </div>
+    <div class="center-div" id="gameOverDisplay">
+      <div class="game-over-display">
+        <h1 id="finalScoreElement">0</h1>
+        <p>Points</p>
+        <div>
+          <button id="startGameButton">Start Game</button>
+        </div>
+      </div>
+    </div>
     <canvas></canvas>
   </body>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
-    integrity="sha512-16esztaSRplJROstbIIdwX3N97V1+pZvV33ABoG1H2OyTttBxEGkTsoIVsiP1iaTtM8b3+hu2kB6pQ4Clr5yug=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  ></script>
   <script src="index.js"></script>
 </html>
