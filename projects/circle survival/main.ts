@@ -9,7 +9,9 @@ const centerY = canvas.height / 2;
 
 const projectileSpeed: number = 5;
 const playerMaxSpeed: number = 5;
-const player = new MovingObject(centerX, centerY, 10, "white", { x: 0, y: 0 });
+const playerAcceleration: number = 0.5;
+
+const player = new Player(centerX, centerY, 10, "white", { x: 0, y: 0 });
 
 let projectiles: MovingObject[] = [];
 let enemies: MovingObject[] = [];
@@ -41,39 +43,26 @@ function playerKeyboardInput() {
   let moveRight =
     pressedKeys.includes("d") || pressedKeys.includes("ArrowRight");
 
-  // let directionY: number;
-  // let directionX: number;
-  
+  let newTargetVelocity: velocity = { x: 0, y: 0 };
+
   if (moveUp && !moveDown) {
-    player.velocity.y = -playerMaxSpeed;
-    // directionY = -1;
+    newTargetVelocity.y = -playerMaxSpeed;
   } else if (!moveUp && moveDown) {
-    player.velocity.y = playerMaxSpeed;
-    // directionY = 1;
-  } else {
-    player.velocity.y = 0;
-    // directionY = 0;
+    newTargetVelocity.y = playerMaxSpeed;
   }
 
   if (moveLeft && !moveRight) {
-    player.velocity.x = -playerMaxSpeed;
-    // directionX = -1;
+    newTargetVelocity.x = -playerMaxSpeed;
   } else if (!moveLeft && moveRight) {
-    player.velocity.x = playerMaxSpeed;
-    // directionX = 1;
-  } else {
-    player.velocity.x = 0;
-    // directionX = 0;
+    newTargetVelocity.x = playerMaxSpeed;
   }
 
-  // let angle = Math.atan2(directionY, directionX)
+  if (newTargetVelocity.y != 0 && newTargetVelocity.x != 0) {
+    newTargetVelocity.y *= 0.7;
+    newTargetVelocity.x *= 0.7;
+  }
 
-  // let velocity = {
-  //   x: Math.cos(angle) * projectileSpeed,
-  //   y: Math.sin(angle) * projectileSpeed,
-  // };
-
-  // player.velocity = velocity
+  player.targetVelocity = newTargetVelocity;
 }
 
 let animationID: number;
@@ -88,29 +77,12 @@ function animate() {
   player.draw();
 
   projectilesOffScreen();
-
-  console.log(pressedKeys);
-}
-
-function createProjectile(event: MouseEvent) {
-  let angle = Math.atan2(event.clientY - player.y, event.clientX - player.x);
-
-  let velocity = {
-    x: Math.cos(angle) * projectileSpeed,
-    y: Math.sin(angle) * projectileSpeed,
-  };
-
-  projectiles.push(new MovingObject(player.x, player.y, 5, "white", velocity));
 }
 
 addEventListener("click", createProjectile);
-addEventListener("keydown", (event) => {
-  if (!pressedKeys.includes(event.key)) {
-    pressedKeys.push(event.key);
-  }
-});
-addEventListener("keyup", (event) =>
-  pressedKeys.splice(pressedKeys.indexOf(event.key), 1)
-);
+
+addEventListener("keydown", onKeyDown);
+
+addEventListener("keyup", onKeyUp);
 
 animate();

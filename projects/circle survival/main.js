@@ -6,7 +6,8 @@ var centerX = canvas.width / 2;
 var centerY = canvas.height / 2;
 var projectileSpeed = 5;
 var playerMaxSpeed = 5;
-var player = new MovingObject(centerX, centerY, 10, "white", { x: 0, y: 0 });
+var playerAcceleration = 0.5;
+var player = new Player(centerX, centerY, 10, "white", { x: 0, y: 0 });
 var projectiles = [];
 var enemies = [];
 // let particles: Particle[] = [];
@@ -29,38 +30,24 @@ function playerKeyboardInput() {
     var moveDown = pressedKeys.includes("s") || pressedKeys.includes("ArrowDown");
     var moveLeft = pressedKeys.includes("a") || pressedKeys.includes("ArrowLeft");
     var moveRight = pressedKeys.includes("d") || pressedKeys.includes("ArrowRight");
-    // let directionY: number;
-    // let directionX: number;
+    var newTargetVelocity = { x: 0, y: 0 };
     if (moveUp && !moveDown) {
-        player.velocity.y = -playerMaxSpeed;
-        // directionY = -1;
+        newTargetVelocity.y = -playerMaxSpeed;
     }
     else if (!moveUp && moveDown) {
-        player.velocity.y = playerMaxSpeed;
-        // directionY = 1;
-    }
-    else {
-        player.velocity.y = 0;
-        // directionY = 0;
+        newTargetVelocity.y = playerMaxSpeed;
     }
     if (moveLeft && !moveRight) {
-        player.velocity.x = -playerMaxSpeed;
-        // directionX = -1;
+        newTargetVelocity.x = -playerMaxSpeed;
     }
     else if (!moveLeft && moveRight) {
-        player.velocity.x = playerMaxSpeed;
-        // directionX = 1;
+        newTargetVelocity.x = playerMaxSpeed;
     }
-    else {
-        player.velocity.x = 0;
-        // directionX = 0;
+    if (newTargetVelocity.y != 0 && newTargetVelocity.x != 0) {
+        newTargetVelocity.y *= 0.7;
+        newTargetVelocity.x *= 0.7;
     }
-    // let angle = Math.atan2(directionY, directionX)
-    // let velocity = {
-    //   x: Math.cos(angle) * projectileSpeed,
-    //   y: Math.sin(angle) * projectileSpeed,
-    // };
-    // player.velocity = velocity
+    player.targetVelocity = newTargetVelocity;
 }
 var animationID;
 function animate() {
@@ -70,23 +57,8 @@ function animate() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     player.draw();
     projectilesOffScreen();
-    console.log(pressedKeys);
-}
-function createProjectile(event) {
-    var angle = Math.atan2(event.clientY - player.y, event.clientX - player.x);
-    var velocity = {
-        x: Math.cos(angle) * projectileSpeed,
-        y: Math.sin(angle) * projectileSpeed,
-    };
-    projectiles.push(new MovingObject(player.x, player.y, 5, "white", velocity));
 }
 addEventListener("click", createProjectile);
-addEventListener("keydown", function (event) {
-    if (!pressedKeys.includes(event.key)) {
-        pressedKeys.push(event.key);
-    }
-});
-addEventListener("keyup", function (event) {
-    return pressedKeys.splice(pressedKeys.indexOf(event.key), 1);
-});
+addEventListener("keydown", onKeyDown);
+addEventListener("keyup", onKeyUp);
 animate();
