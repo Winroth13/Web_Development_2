@@ -9,43 +9,6 @@ const centerY = canvas.height / 2;
 
 const projectileSpeed: number = 5;
 const playerMaxSpeed: number = 5;
-
-type velocity = {
-  x: number;
-  y: number;
-};
-
-class MovingObject {
-  x: number;
-  y: number;
-  radius: number;
-  colour: string;
-  velocity: velocity;
-
-  constructor(
-    x: number,
-    y: number,
-    radius: number,
-    colour: string,
-    velocity: velocity
-  ) {
-    this.x = x;
-    this.y = y;
-    this.radius = radius;
-    this.colour = colour;
-    this.velocity = velocity;
-  }
-
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-    ctx.fillStyle = this.colour;
-    ctx.fill();
-    this.x += this.velocity.x;
-    this.y += this.velocity.y;
-  }
-}
-
 const player = new MovingObject(centerX, centerY, 10, "white", { x: 0, y: 0 });
 
 let projectiles: MovingObject[] = [];
@@ -78,21 +41,39 @@ function playerKeyboardInput() {
   let moveRight =
     pressedKeys.includes("d") || pressedKeys.includes("ArrowRight");
 
+  // let directionY: number;
+  // let directionX: number;
+  
   if (moveUp && !moveDown) {
     player.velocity.y = -playerMaxSpeed;
+    // directionY = -1;
   } else if (!moveUp && moveDown) {
     player.velocity.y = playerMaxSpeed;
+    // directionY = 1;
   } else {
     player.velocity.y = 0;
+    // directionY = 0;
   }
 
   if (moveLeft && !moveRight) {
     player.velocity.x = -playerMaxSpeed;
+    // directionX = -1;
   } else if (!moveLeft && moveRight) {
     player.velocity.x = playerMaxSpeed;
+    // directionX = 1;
   } else {
     player.velocity.x = 0;
+    // directionX = 0;
   }
+
+  // let angle = Math.atan2(directionY, directionX)
+
+  // let velocity = {
+  //   x: Math.cos(angle) * projectileSpeed,
+  //   y: Math.sin(angle) * projectileSpeed,
+  // };
+
+  // player.velocity = velocity
 }
 
 let animationID: number;
@@ -112,9 +93,9 @@ function animate() {
 }
 
 function createProjectile(event: MouseEvent) {
-  const angle = Math.atan2(event.clientY - player.y, event.clientX - player.x);
+  let angle = Math.atan2(event.clientY - player.y, event.clientX - player.x);
 
-  const velocity = {
+  let velocity = {
     x: Math.cos(angle) * projectileSpeed,
     y: Math.sin(angle) * projectileSpeed,
   };

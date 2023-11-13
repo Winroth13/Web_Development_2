@@ -6,24 +6,6 @@ var centerX = canvas.width / 2;
 var centerY = canvas.height / 2;
 var projectileSpeed = 5;
 var playerMaxSpeed = 5;
-var MovingObject = /** @class */ (function () {
-    function MovingObject(x, y, radius, colour, velocity) {
-        this.x = x;
-        this.y = y;
-        this.radius = radius;
-        this.colour = colour;
-        this.velocity = velocity;
-    }
-    MovingObject.prototype.draw = function () {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-        ctx.fillStyle = this.colour;
-        ctx.fill();
-        this.x += this.velocity.x;
-        this.y += this.velocity.y;
-    };
-    return MovingObject;
-}());
 var player = new MovingObject(centerX, centerY, 10, "white", { x: 0, y: 0 });
 var projectiles = [];
 var enemies = [];
@@ -47,24 +29,38 @@ function playerKeyboardInput() {
     var moveDown = pressedKeys.includes("s") || pressedKeys.includes("ArrowDown");
     var moveLeft = pressedKeys.includes("a") || pressedKeys.includes("ArrowLeft");
     var moveRight = pressedKeys.includes("d") || pressedKeys.includes("ArrowRight");
+    // let directionY: number;
+    // let directionX: number;
     if (moveUp && !moveDown) {
         player.velocity.y = -playerMaxSpeed;
+        // directionY = -1;
     }
     else if (!moveUp && moveDown) {
         player.velocity.y = playerMaxSpeed;
+        // directionY = 1;
     }
     else {
         player.velocity.y = 0;
+        // directionY = 0;
     }
     if (moveLeft && !moveRight) {
         player.velocity.x = -playerMaxSpeed;
+        // directionX = -1;
     }
     else if (!moveLeft && moveRight) {
         player.velocity.x = playerMaxSpeed;
+        // directionX = 1;
     }
     else {
         player.velocity.x = 0;
+        // directionX = 0;
     }
+    // let angle = Math.atan2(directionY, directionX)
+    // let velocity = {
+    //   x: Math.cos(angle) * projectileSpeed,
+    //   y: Math.sin(angle) * projectileSpeed,
+    // };
+    // player.velocity = velocity
 }
 var animationID;
 function animate() {
