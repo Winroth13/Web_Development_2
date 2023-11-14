@@ -4,52 +4,40 @@ type velocity = {
 };
 
 class MovingObject {
-  x: number;
-  y: number;
+  xPos: number;
+  yPos: number;
   radius: number;
   colour: string;
   velocity: velocity;
 
-  constructor(
-    x: number,
-    y: number,
-    radius: number,
-    colour: string,
-    velocity: velocity
-  ) {
-    this.x = x;
-    this.y = y;
+  constructor(xPos: number, yPos: number, radius: number, colour: string) {
+    this.xPos = xPos;
+    this.yPos = yPos;
     this.radius = radius;
     this.colour = colour;
-    this.velocity = velocity;
+    this.velocity = { x: 0, y: 0 };
   }
 
   draw() {
     this.update();
 
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    ctx.arc(this.xPos, this.yPos, this.radius, 0, Math.PI * 2, false);
     ctx.fillStyle = this.colour;
     ctx.fill();
   }
 
   update() {
-    this.x += this.velocity.x;
-    this.y += this.velocity.y;
+    this.xPos += this.velocity.x;
+    this.yPos += this.velocity.y;
   }
 }
 
 class Player extends MovingObject {
   targetVelocity: velocity;
 
-  constructor(
-    x: number,
-    y: number,
-    radius: number,
-    colour: string,
-    velocity: velocity
-  ) {
-    super(x, y, radius, colour, velocity);
+  constructor(xPos: number, yPos: number, radius: number, colour: string) {
+    super(xPos, yPos, radius, colour);
     this.targetVelocity = this.velocity;
   }
 
@@ -66,7 +54,47 @@ class Player extends MovingObject {
       this.velocity.x -= playerAcceleration;
     }
 
-    this.x += this.velocity.x;
-    this.y += this.velocity.y;
+    this.xPos += this.velocity.x;
+    this.yPos += this.velocity.y;
+  }
+}
+
+class Enemy extends MovingObject {
+  minRadius: number;
+
+  constructor(xPos: number, yPos: number, radius: number, colour: string) {
+    super(xPos, yPos, radius, colour);
+    this.minRadius = this.radius;
+  }
+
+  update() {
+    if (this.radius > this.minRadius) {
+      this.radius -= 1;
+    }
+
+    let newAngle = Math.atan2(player.yPos - this.yPos, player.xPos - this.xPos);
+
+    let newVelocity = {
+      x: Math.cos(newAngle),
+      y: Math.sin(newAngle),
+    };
+
+    this.velocity = newVelocity;
+
+    this.xPos += this.velocity.x;
+    this.yPos += this.velocity.y;
+  }
+}
+
+class Projectile extends MovingObject {
+  constructor(
+    xPos: number,
+    yPos: number,
+    radius: number,
+    colour: string,
+    velocity: velocity
+  ) {
+    super(xPos, yPos, radius, colour);
+    this.velocity = velocity;
   }
 }

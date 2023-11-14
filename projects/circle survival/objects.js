@@ -14,30 +14,30 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 var MovingObject = /** @class */ (function () {
-    function MovingObject(x, y, radius, colour, velocity) {
-        this.x = x;
-        this.y = y;
+    function MovingObject(xPos, yPos, radius, colour) {
+        this.xPos = xPos;
+        this.yPos = yPos;
         this.radius = radius;
         this.colour = colour;
-        this.velocity = velocity;
+        this.velocity = { x: 0, y: 0 };
     }
     MovingObject.prototype.draw = function () {
         this.update();
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        ctx.arc(this.xPos, this.yPos, this.radius, 0, Math.PI * 2, false);
         ctx.fillStyle = this.colour;
         ctx.fill();
     };
     MovingObject.prototype.update = function () {
-        this.x += this.velocity.x;
-        this.y += this.velocity.y;
+        this.xPos += this.velocity.x;
+        this.yPos += this.velocity.y;
     };
     return MovingObject;
 }());
 var Player = /** @class */ (function (_super) {
     __extends(Player, _super);
-    function Player(x, y, radius, colour, velocity) {
-        var _this = _super.call(this, x, y, radius, colour, velocity) || this;
+    function Player(xPos, yPos, radius, colour) {
+        var _this = _super.call(this, xPos, yPos, radius, colour) || this;
         _this.targetVelocity = _this.velocity;
         return _this;
     }
@@ -54,8 +54,39 @@ var Player = /** @class */ (function (_super) {
         else if (this.velocity.x > this.targetVelocity.x) {
             this.velocity.x -= playerAcceleration;
         }
-        this.x += this.velocity.x;
-        this.y += this.velocity.y;
+        this.xPos += this.velocity.x;
+        this.yPos += this.velocity.y;
     };
     return Player;
+}(MovingObject));
+var Enemy = /** @class */ (function (_super) {
+    __extends(Enemy, _super);
+    function Enemy(xPos, yPos, radius, colour) {
+        var _this = _super.call(this, xPos, yPos, radius, colour) || this;
+        _this.minRadius = _this.radius;
+        return _this;
+    }
+    Enemy.prototype.update = function () {
+        if (this.radius > this.minRadius) {
+            this.radius -= 1;
+        }
+        var newAngle = Math.atan2(player.yPos - this.yPos, player.xPos - this.xPos);
+        var newVelocity = {
+            x: Math.cos(newAngle),
+            y: Math.sin(newAngle),
+        };
+        this.velocity = newVelocity;
+        this.xPos += this.velocity.x;
+        this.yPos += this.velocity.y;
+    };
+    return Enemy;
+}(MovingObject));
+var Projectile = /** @class */ (function (_super) {
+    __extends(Projectile, _super);
+    function Projectile(xPos, yPos, radius, colour, velocity) {
+        var _this = _super.call(this, xPos, yPos, radius, colour) || this;
+        _this.velocity = velocity;
+        return _this;
+    }
+    return Projectile;
 }(MovingObject));

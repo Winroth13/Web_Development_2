@@ -1,12 +1,17 @@
 function createProjectile(event: MouseEvent) {
-  let angle = Math.atan2(event.clientY - player.y, event.clientX - player.x);
+  let angle = Math.atan2(
+    event.clientY - player.yPos,
+    event.clientX - player.xPos
+  );
 
   let velocity = {
     x: Math.cos(angle) * projectileSpeed,
     y: Math.sin(angle) * projectileSpeed,
   };
 
-  projectiles.push(new MovingObject(player.x, player.y, 5, "white", velocity));
+  projectiles.push(
+    new Projectile(player.xPos, player.yPos, 5, "white", velocity)
+  );
 }
 
 function onKeyDown(event: KeyboardEvent) {
