@@ -72,8 +72,8 @@ var Enemy = /** @class */ (function (_super) {
         }
         var newAngle = Math.atan2(player.yPos - this.yPos, player.xPos - this.xPos);
         var newVelocity = {
-            x: Math.cos(newAngle),
-            y: Math.sin(newAngle),
+            x: Math.cos(newAngle) * enemySpeed,
+            y: Math.sin(newAngle) * enemySpeed,
         };
         this.velocity = newVelocity;
         this.xPos += this.velocity.x;
@@ -90,3 +90,29 @@ var Projectile = /** @class */ (function (_super) {
     }
     return Projectile;
 }(MovingObject));
+var Particle = /** @class */ (function (_super) {
+    __extends(Particle, _super);
+    function Particle(xPos, yPos, radius, colour, velocity) {
+        var _this = _super.call(this, xPos, yPos, radius, colour, velocity) || this;
+        _this.alpha = 1;
+        return _this;
+    }
+    Particle.prototype.draw = function () {
+        this.update();
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.beginPath();
+        ctx.arc(this.xPos, this.yPos, this.radius, 0, Math.PI * 2, false);
+        ctx.fillStyle = this.colour;
+        ctx.fill();
+        ctx.restore();
+    };
+    Particle.prototype.update = function () {
+        this.velocity.x *= particleFriction;
+        this.velocity.y *= particleFriction;
+        this.xPos += this.velocity.x;
+        this.yPos += this.velocity.y;
+        this.alpha -= 0.01;
+    };
+    return Particle;
+}(Projectile));

@@ -75,8 +75,8 @@ class Enemy extends MovingObject {
     let newAngle = Math.atan2(player.yPos - this.yPos, player.xPos - this.xPos);
 
     let newVelocity = {
-      x: Math.cos(newAngle),
-      y: Math.sin(newAngle),
+      x: Math.cos(newAngle) * enemySpeed,
+      y: Math.sin(newAngle) * enemySpeed,
     };
 
     this.velocity = newVelocity;
@@ -96,5 +96,42 @@ class Projectile extends MovingObject {
   ) {
     super(xPos, yPos, radius, colour);
     this.velocity = velocity;
+  }
+}
+
+class Particle extends Projectile {
+  alpha: number;
+
+  constructor(
+    xPos: number,
+    yPos: number,
+    radius: number,
+    colour: string,
+    velocity: velocity
+  ) {
+    super(xPos, yPos, radius, colour, velocity);
+    this.alpha = 1;
+  }
+
+  draw() {
+    this.update();
+
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.beginPath();
+    ctx.arc(this.xPos, this.yPos, this.radius, 0, Math.PI * 2, false);
+    ctx.fillStyle = this.colour;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  update() {
+    this.velocity.x *= particleFriction;
+    this.velocity.y *= particleFriction;
+
+    this.xPos += this.velocity.x;
+    this.yPos += this.velocity.y;
+
+    this.alpha -= 0.01;
   }
 }
