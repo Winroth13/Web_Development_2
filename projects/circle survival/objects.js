@@ -61,9 +61,21 @@ var Player = /** @class */ (function (_super) {
 }(MovingObject));
 var Enemy = /** @class */ (function (_super) {
     __extends(Enemy, _super);
-    function Enemy(xPos, yPos, radius, colour) {
-        var _this = _super.call(this, xPos, yPos, radius, colour) || this;
+    function Enemy(radius, speed, colour) {
+        var _this = this;
+        var xPos;
+        var yPos;
+        if (Math.random() < 0.5) {
+            xPos = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
+            yPos = Math.random() * canvas.height;
+        }
+        else {
+            xPos = Math.random() * canvas.width;
+            yPos = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
+        }
+        _this = _super.call(this, xPos, yPos, radius, colour) || this;
         _this.minRadius = _this.radius;
+        _this.speed = speed;
         return _this;
     }
     Enemy.prototype.update = function () {
@@ -72,8 +84,8 @@ var Enemy = /** @class */ (function (_super) {
         }
         var newAngle = Math.atan2(player.yPos - this.yPos, player.xPos - this.xPos);
         var newVelocity = {
-            x: Math.cos(newAngle) * enemySpeed,
-            y: Math.sin(newAngle) * enemySpeed,
+            x: Math.cos(newAngle) * this.speed,
+            y: Math.sin(newAngle) * this.speed,
         };
         this.velocity = newVelocity;
         this.xPos += this.velocity.x;

@@ -20,13 +20,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
+}
+
+.pause-display {
+  display: none;
+  color: white;
 }
 
 .game-over-display {
   background-color: white;
   width: 24rem;
   padding: 1rem;
-  text-align: center;
 }
 
 .game-over-display h1 {

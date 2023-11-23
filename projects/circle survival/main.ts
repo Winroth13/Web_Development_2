@@ -11,6 +11,7 @@ const gameOverDisplay =
   document.querySelector<HTMLElement>("#gameOverDisplay")!;
 const startGameButton = document.querySelector("#startGameButton")!;
 const finalScoreElement = document.querySelector("#finalScoreElement")!;
+const pauseDisplay = document.querySelector<HTMLElement>("#pauseDisplay")!;
 
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
@@ -23,7 +24,6 @@ const particleFriction: number = 0.98;
 const enemySpeed: number = 2;
 
 const fps: number = 60;
-// const timePerFrame: number = 1000 / fps;
 
 const player = new Player(centerX, centerY, 10, "white");
 
@@ -50,52 +50,25 @@ function init() {
   scoreElement.innerHTML = score.toString();
 }
 
-function playerKeyboardInput() {
-  let moveUp = pressedKeys.includes("w") || pressedKeys.includes("ArrowUp");
-  let moveDown = pressedKeys.includes("s") || pressedKeys.includes("ArrowDown");
-  let moveLeft = pressedKeys.includes("a") || pressedKeys.includes("ArrowLeft");
-  let moveRight =
-    pressedKeys.includes("d") || pressedKeys.includes("ArrowRight");
-
-  let newTargetVelocity: velocity = { x: 0, y: 0 };
-
-  if (moveUp && !moveDown) {
-    newTargetVelocity.y = -playerMaxSpeed;
-  } else if (!moveUp && moveDown) {
-    newTargetVelocity.y = playerMaxSpeed;
-  }
-
-  if (moveLeft && !moveRight) {
-    newTargetVelocity.x = -playerMaxSpeed;
-  } else if (!moveLeft && moveRight) {
-    newTargetVelocity.x = playerMaxSpeed;
-  }
-
-  if (newTargetVelocity.y != 0 && newTargetVelocity.x != 0) {
-    newTargetVelocity.y *= 0.7;
-    newTargetVelocity.x *= 0.7;
-  }
-
-  player.targetVelocity = newTargetVelocity;
-}
-
 function spawnEnemy() {
-  let radius = 20;
+  let newEnemy: Enemy;
 
-  let xPos: number;
-  let yPos: number;
-
-  if (Math.random() < 0.5) {
-    xPos = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
-    yPos = Math.random() * canvas.height;
+  if (Math.random() > score / 100) {
+    newEnemy = new Enemy(20, 2, "red");
   } else {
-    xPos = Math.random() * canvas.width;
-    yPos = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
+    switch (Math.floor(Math.random() * 3 + 1)) {
+      case 1:
+        newEnemy = new Enemy(40, 1, "orange");
+        break;
+      case 2:
+        newEnemy = new Enemy(15, 5, "blue");
+        break;
+      case 3:
+        newEnemy = new Enemy(25, 2, "yellow");
+    }
   }
 
-  let colour = `hsl(${Math.floor(Math.random() * 360)}, 50%, 50%)`;
-
-  enemies.push(new Enemy(xPos, yPos, radius, colour));
+  enemies.push(newEnemy!);
 }
 
 function updateProjectiles() {
@@ -138,9 +111,10 @@ function enemyHittingPlayer(enemy: Enemy) {
     gameOverDisplay.style.display = "flex";
     finalScoreElement.innerHTML = score.toString();
     scoreDisplay.style.display = "none";
+
     removeEventListener("click", createProjectile);
-    addEventListener("keydown", onKeyDown);
-    addEventListener("keyup", onKeyUp);
+    removeEventListener("keydown", onKeyDown);
+    removeEventListener("blur", pause);
   }
 }
 
@@ -185,8 +159,6 @@ function animate() {
   animationID = requestAnimationFrame(animate);
 
   if (animationID % fps == 0) {
-    console.log(animationID);
-
     score += 1;
     scoreElement.innerHTML = score.toString();
 
@@ -222,5 +194,6 @@ startGameButton.addEventListener("click", () => {
     addEventListener("click", createProjectile);
     addEventListener("keydown", onKeyDown);
     addEventListener("keyup", onKeyUp);
+    addEventListener("blur", pause);
   }, 0);
 });

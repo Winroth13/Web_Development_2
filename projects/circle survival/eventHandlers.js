@@ -14,3 +14,48 @@ function onKeyDown(event) {
 function onKeyUp(event) {
     pressedKeys.splice(pressedKeys.indexOf(event.key), 1);
 }
+function playerKeyboardInput() {
+    var moveUp = pressedKeys.includes("w") || pressedKeys.includes("ArrowUp");
+    var moveDown = pressedKeys.includes("s") || pressedKeys.includes("ArrowDown");
+    var moveLeft = pressedKeys.includes("a") || pressedKeys.includes("ArrowLeft");
+    var moveRight = pressedKeys.includes("d") || pressedKeys.includes("ArrowRight");
+    if (pressedKeys.includes("Escape")) {
+        pause();
+    }
+    var newTargetVelocity = { x: 0, y: 0 };
+    if (moveUp && !moveDown) {
+        newTargetVelocity.y = -playerMaxSpeed;
+    }
+    else if (!moveUp && moveDown) {
+        newTargetVelocity.y = playerMaxSpeed;
+    }
+    if (moveLeft && !moveRight) {
+        newTargetVelocity.x = -playerMaxSpeed;
+    }
+    else if (!moveLeft && moveRight) {
+        newTargetVelocity.x = playerMaxSpeed;
+    }
+    if (newTargetVelocity.y != 0 && newTargetVelocity.x != 0) {
+        newTargetVelocity.y *= 0.7;
+        newTargetVelocity.x *= 0.7;
+    }
+    player.targetVelocity = newTargetVelocity;
+}
+function pause() {
+    cancelAnimationFrame(animationID);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    pauseDisplay.style.display = "block";
+    setTimeout(function () {
+        addEventListener("click", unpause);
+        removeEventListener("click", createProjectile);
+    }, 0);
+}
+function unpause() {
+    pauseDisplay.style.display = "none";
+    setTimeout(function () {
+        removeEventListener("click", unpause);
+        addEventListener("click", createProjectile);
+    }, 0);
+    animate();
+}

@@ -61,10 +61,23 @@ class Player extends MovingObject {
 
 class Enemy extends MovingObject {
   minRadius: number;
+  speed: number;
 
-  constructor(xPos: number, yPos: number, radius: number, colour: string) {
+  constructor(radius: number, speed: number, colour: string) {
+    let xPos: number;
+    let yPos: number;
+
+    if (Math.random() < 0.5) {
+      xPos = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
+      yPos = Math.random() * canvas.height;
+    } else {
+      xPos = Math.random() * canvas.width;
+      yPos = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
+    }
+
     super(xPos, yPos, radius, colour);
     this.minRadius = this.radius;
+    this.speed = speed;
   }
 
   update() {
@@ -75,8 +88,8 @@ class Enemy extends MovingObject {
     let newAngle = Math.atan2(player.yPos - this.yPos, player.xPos - this.xPos);
 
     let newVelocity = {
-      x: Math.cos(newAngle) * enemySpeed,
-      y: Math.sin(newAngle) * enemySpeed,
+      x: Math.cos(newAngle) * this.speed,
+      y: Math.sin(newAngle) * this.speed,
     };
 
     this.velocity = newVelocity;
