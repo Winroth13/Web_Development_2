@@ -12,6 +12,10 @@ const gameOverDisplay =
 const startGameButton = document.querySelector("#startGameButton")!;
 const finalScoreElement = document.querySelector("#finalScoreElement")!;
 const pauseDisplay = document.querySelector<HTMLElement>("#pauseDisplay")!;
+const progressDusplay =
+  document.querySelector<HTMLElement>("#progressDisplay")!;
+const experienceBar = document.querySelector("#experienceBar")!;
+const upgradeMessage = document.querySelector("#upgradeMessage")!;
 
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
@@ -19,11 +23,12 @@ const centerY = canvas.height / 2;
 const projectileSpeed: number = 5;
 const playerMaxSpeed: number = 5;
 const playerAcceleration: number = 0.5;
-const enemnySpawnDelay: number = 1000;
 const particleFriction: number = 0.98;
 const enemySpeed: number = 2;
 
 const fps: number = 60;
+
+const experiencePerKill: number = 5;
 
 const player = new Player(centerX, centerY, 10, "white");
 
@@ -35,6 +40,8 @@ let pressedKeys: string[] = [];
 
 let animationID: number;
 let score: number;
+let enemySpawnDelay: number;
+let experiencePoints: number = 0;
 
 function init() {
   player.xPos = centerX;
@@ -42,6 +49,7 @@ function init() {
   player.velocity = { x: 0, y: 0 };
 
   animationID = 0;
+  enemySpawnDelay = 2 * fps;
 
   projectiles = [];
   enemies = [];
@@ -144,6 +152,8 @@ function projectileHittingEnemy(enemy: Enemy, enemyIndex: number) {
       if (enemy.minRadius >= 20) {
         enemy.minRadius -= 5;
       } else {
+        updateExperience(experiencePoints + experiencePerKill);
+
         setTimeout(() => {
           enemies.splice(enemyIndex, 1);
         }, 0);
@@ -155,12 +165,24 @@ function projectileHittingEnemy(enemy: Enemy, enemyIndex: number) {
   });
 }
 
+function updateExperience(value: number) {
+  experiencePoints = value;
+
+  experienceBar.setAttribute("value", experiencePoints.toString());
+}
+
 function animate() {
   animationID = requestAnimationFrame(animate);
 
   if (animationID % fps == 0) {
     score += 1;
     scoreElement.innerHTML = score.toString();
+  }
+
+  if (animationID % enemySpawnDelay == 0) {
+    enemySpawnDelay = Math.round(enemySpawnDelay * 0.98);
+
+    console.log(enemySpawnDelay);
 
     spawnEnemy();
   }
@@ -188,6 +210,7 @@ function animate() {
 startGameButton.addEventListener("click", () => {
   gameOverDisplay.style.display = "none";
   scoreDisplay.style.display = "block";
+  progressDusplay.style.display = "flex";
   init();
   animate();
   setTimeout(() => {

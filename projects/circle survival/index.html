@@ -8,13 +8,17 @@
   </head>
   <body>
     <div class="score-display" id="scoreDisplay">
-      <span>Score: </span><span id="scoreElement">0</span>
+      <label>Score: </label><label id="scoreElement">0</label>
     </div>
     <div class="center-div pause-display" id="pauseDisplay">
       <div>
         <h1>Game paused</h1>
         <h3>Click to continue</h3>
       </div>
+    </div>
+    <div class="progress-div" id="progressDisplay">
+      <progress value="0" max="100" id="experienceBar"></progress>
+      <label id="upgradeMessage">Press Q to upgrade</label>
     </div>
     <div class="center-div" id="gameOverDisplay">
       <div class="game-over-display">
