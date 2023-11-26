@@ -17,11 +17,15 @@ function createProjectile(event: MouseEvent) {
 function onKeyDown(event: KeyboardEvent) {
   if (!pressedKeys.includes(event.key)) {
     pressedKeys.push(event.key);
+
+    playerKeyboardInput();
   }
 }
 
 function onKeyUp(event: KeyboardEvent) {
   pressedKeys.splice(pressedKeys.indexOf(event.key), 1);
+
+  playerKeyboardInput();
 }
 
 function playerKeyboardInput() {
@@ -31,7 +35,17 @@ function playerKeyboardInput() {
   let moveRight =
     pressedKeys.includes("d") || pressedKeys.includes("ArrowRight");
 
-  if (pressedKeys.includes("Escape")) {
+  if (pressedKeys.includes("q")) {
+    openUpgradeMenu = !openUpgradeMenu;
+
+    if (openUpgradeMenu == true) {
+      pause();
+    } else {
+      unpause();
+    }
+  }
+
+  if (pressedKeys.includes("Escape") && paused == false) {
     pause();
   }
 
@@ -60,24 +74,35 @@ function playerKeyboardInput() {
 function pause() {
   cancelAnimationFrame(animationID);
 
-  ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  if (paused == false) {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  pauseDisplay.style.display = "block";
-
-  setTimeout(() => {
-    addEventListener("click", unpause);
     removeEventListener("click", createProjectile);
-  }, 0);
+  }
+
+  if (openUpgradeMenu == false) {
+    pauseDisplay.style.display = "block";
+
+    addEventListener("click", unpause);
+  } else {
+    pauseDisplay.style.display = "none";
+    upgradeDisplay.style.display = "flex";
+
+    removeEventListener("click", unpause);
+  }
+
+  paused = true;
 }
 
 function unpause() {
   pauseDisplay.style.display = "none";
+  upgradeDisplay.style.display = "none";
 
-  setTimeout(() => {
-    removeEventListener("click", unpause);
-    addEventListener("click", createProjectile);
-  }, 0);
+  removeEventListener("click", unpause);
+  addEventListener("click", createProjectile);
 
   animate();
+
+  paused = false;
 }

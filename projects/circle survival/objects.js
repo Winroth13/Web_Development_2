@@ -61,7 +61,7 @@ var Player = /** @class */ (function (_super) {
 }(MovingObject));
 var Enemy = /** @class */ (function (_super) {
     __extends(Enemy, _super);
-    function Enemy(radius, speed, colour) {
+    function Enemy(radius, speedMultiplier, colour) {
         var _this = this;
         var xPos;
         var yPos;
@@ -75,7 +75,7 @@ var Enemy = /** @class */ (function (_super) {
         }
         _this = _super.call(this, xPos, yPos, radius, colour) || this;
         _this.minRadius = _this.radius;
-        _this.speed = speed;
+        _this.speed = enemyBaseSpeed * speedMultiplier;
         return _this;
     }
     Enemy.prototype.update = function () {

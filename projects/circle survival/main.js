@@ -2,24 +2,59 @@ var canvas = document.querySelector("canvas");
 var ctx = canvas.getContext("2d");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
-var scoreDisplay = document.querySelector("#scoreDisplay");
+var statDisplay = document.querySelector("#statDisplay");
 var scoreElement = document.querySelector("#scoreElement");
+var lifeElement = document.querySelector("#lifeElement");
 var gameOverDisplay = document.querySelector("#gameOverDisplay");
 var startGameButton = document.querySelector("#startGameButton");
 var finalScoreElement = document.querySelector("#finalScoreElement");
 var pauseDisplay = document.querySelector("#pauseDisplay");
-var progressDusplay = document.querySelector("#progressDisplay");
+var progressDisplay = document.querySelector("#progressDisplay");
 var experienceBar = document.querySelector("#experienceBar");
 var upgradeMessage = document.querySelector("#upgradeMessage");
+var upgradeDisplay = document.querySelector("#upgradeDisplay");
+var upgradeOptions = document.querySelector("#upgradeOptions");
 var centerX = canvas.width / 2;
 var centerY = canvas.height / 2;
 var projectileSpeed = 5;
 var playerMaxSpeed = 5;
 var playerAcceleration = 0.5;
 var particleFriction = 0.98;
-var enemySpeed = 2;
+var enemyBaseSpeed = 2;
 var fps = 60;
+var startingExperiencePerLevel = 10;
+var experiencePerLevelMultiplier = 1.5;
 var experiencePerKill = 5;
+var projectileDamage = 5;
+var startingLives = 3;
+var lives = startingLives;
+var superiority = 0;
+var upgrades = [
+    {
+        name: "Deadlier Projectiles",
+        description: "Damage Per Hit",
+        variable: projectileDamage,
+        amount: 1,
+    },
+    {
+        name: "Insert Name",
+        description: "Current Lives",
+        variable: lives,
+        amount: 1,
+    },
+    {
+        name: "Faster Learning",
+        description: "Experience Per Kill",
+        variable: experiencePerKill,
+        amount: 1,
+    },
+    {
+        name: "Superiority Complex",
+        description: "Superiority Feeling",
+        variable: superiority,
+        amount: 1,
+    },
+];
 var player = new Player(centerX, centerY, 10, "white");
 var projectiles = [];
 var enemies = [];
@@ -28,7 +63,10 @@ var pressedKeys = [];
 var animationID;
 var score;
 var enemySpawnDelay;
-var experiencePoints = 0;
+var experiencePoints;
+var experiencePerLevel;
+var openUpgradeMenu = false;
+var paused = false;
 function init() {
     player.xPos = centerX;
     player.yPos = centerY;
@@ -38,24 +76,29 @@ function init() {
     projectiles = [];
     enemies = [];
     particles = [];
+    lives = startingLives;
+    updateLife();
     score = 0;
-    scoreElement.innerHTML = score.toString();
+    updateScore();
+    experiencePerLevel = startingExperiencePerLevel;
+    updateExperienceBar();
+    updateExperience(0);
 }
 function spawnEnemy() {
     var newEnemy;
     if (Math.random() > score / 100) {
-        newEnemy = new Enemy(20, 2, "red");
+        newEnemy = new Enemy(20, 1, "red");
     }
     else {
         switch (Math.floor(Math.random() * 3 + 1)) {
             case 1:
-                newEnemy = new Enemy(40, 1, "orange");
+                newEnemy = new Enemy(40, 0.5, "orange");
                 break;
             case 2:
-                newEnemy = new Enemy(15, 5, "blue");
+                newEnemy = new Enemy(15, 2.5, "blue");
                 break;
             case 3:
-                newEnemy = new Enemy(25, 2, "yellow");
+                newEnemy = new Enemy(25, 1, "yellow");
         }
     }
     enemies.push(newEnemy);
@@ -85,16 +128,25 @@ function updateParticles() {
         }
     });
 }
-function enemyHittingPlayer(enemy) {
+function enemyHittingPlayer(enemy, enemyIndex) {
     var distance = Math.hypot(player.xPos - enemy.xPos, player.yPos - enemy.yPos);
     if (distance - enemy.radius - player.radius < 0) {
-        cancelAnimationFrame(animationID);
-        gameOverDisplay.style.display = "flex";
-        finalScoreElement.innerHTML = score.toString();
-        scoreDisplay.style.display = "none";
-        removeEventListener("click", createProjectile);
-        removeEventListener("keydown", onKeyDown);
-        removeEventListener("blur", pause);
+        lives--;
+        updateLife();
+        if ((lives = 0)) {
+            cancelAnimationFrame(animationID);
+            gameOverDisplay.style.display = "flex";
+            finalScoreElement.innerHTML = score.toString();
+            statDisplay.style.display = "none";
+            removeEventListener("click", createProjectile);
+            removeEventListener("keydown", onKeyDown);
+            removeEventListener("blur", pause);
+        }
+        else {
+            setTimeout(function () {
+                enemies.splice(enemyIndex, 1);
+            }, 0);
+        }
     }
 }
 function projectileHittingEnemy(enemy, enemyIndex) {
@@ -108,7 +160,7 @@ function projectileHittingEnemy(enemy, enemyIndex) {
                 }));
             }
             if (enemy.minRadius >= 20) {
-                enemy.minRadius -= 5;
+                enemy.minRadius -= projectileDamage;
             }
             else {
                 updateExperience(experiencePoints + experiencePerKill);
@@ -125,19 +177,32 @@ function projectileHittingEnemy(enemy, enemyIndex) {
 function updateExperience(value) {
     experiencePoints = value;
     experienceBar.setAttribute("value", experiencePoints.toString());
+    if (experiencePoints >= experiencePerLevel) {
+        upgradeMessage.style.display = "block";
+    }
+    else {
+        upgradeMessage.style.display = "none";
+    }
+}
+function updateScore() {
+    scoreElement.innerHTML = "Score: " + score.toString();
+}
+function updateLife() {
+    lifeElement.innerHTML = "Lives: " + lives.toString();
+}
+function updateExperienceBar() {
+    experienceBar.setAttribute("max", experiencePerLevel.toString());
 }
 function animate() {
     animationID = requestAnimationFrame(animate);
     if (animationID % fps == 0) {
         score += 1;
-        scoreElement.innerHTML = score.toString();
+        updateScore();
     }
     if (animationID % enemySpawnDelay == 0) {
         enemySpawnDelay = Math.round(enemySpawnDelay * 0.98);
-        console.log(enemySpawnDelay);
         spawnEnemy();
     }
-    playerKeyboardInput();
     ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     player.draw();
@@ -145,20 +210,57 @@ function animate() {
     updateProjectiles();
     enemies.forEach(function (enemy, enemyIndex) {
         enemy.draw();
-        enemyHittingPlayer(enemy);
+        enemyHittingPlayer(enemy, enemyIndex);
         projectileHittingEnemy(enemy, enemyIndex);
     });
 }
+function newElement(parent, tag, text) {
+    var element = document.createElement(tag);
+    var elementText = document.createTextNode(text);
+    element.appendChild(elementText);
+    parent.appendChild(element);
+    return element;
+}
+function newUpgrades() {
+    var upgrade;
+    var upgradeSelection = [];
+    while (upgradeOptions.hasChildNodes()) {
+        upgradeOptions.removeChild(upgradeOptions.lastChild);
+    }
+    for (var i = 0; i < 3; i++) {
+        upgrade = upgrades[Math.floor(Math.random() * upgrades.length)];
+        while (upgradeSelection.includes(upgrade)) {
+            upgrade = upgrades[Math.floor(Math.random() * upgrades.length)];
+        }
+        upgradeSelection.push(upgrade);
+        var div = document.createElement("div");
+        newElement(div, "h2", upgrade.name);
+        newElement(div, "p", upgrade.description);
+        newElement(div, "p", upgrade.variable + " => " + Number(upgrade.variable + upgrade.amount));
+        var button = newElement(div, "button", "Select");
+        upgradeOptions.appendChild(div);
+        button.id = upgrade.name.replace(/\s/g, "");
+        var buttonElement = document.querySelector("#" + button.id);
+        buttonElement.addEventListener("click", function () {
+            if (experiencePoints >= experiencePerLevel) {
+                updateExperience(experiencePoints - experiencePerLevel);
+                experiencePerLevel *= experiencePerLevelMultiplier;
+                updateExperienceBar();
+                upgrade.variable += upgrade.amount;
+                newUpgrades();
+            }
+        });
+    }
+}
 startGameButton.addEventListener("click", function () {
     gameOverDisplay.style.display = "none";
-    scoreDisplay.style.display = "block";
-    progressDusplay.style.display = "flex";
+    statDisplay.style.display = "block";
+    progressDisplay.style.display = "flex";
     init();
     animate();
-    setTimeout(function () {
-        addEventListener("click", createProjectile);
-        addEventListener("keydown", onKeyDown);
-        addEventListener("keyup", onKeyUp);
-        addEventListener("blur", pause);
-    }, 0);
+    addEventListener("click", createProjectile);
+    addEventListener("keydown", onKeyDown);
+    addEventListener("keyup", onKeyUp);
+    addEventListener("blur", pause);
 });
+newUpgrades();

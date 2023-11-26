@@ -3,6 +3,13 @@ type velocity = {
   y: number;
 };
 
+type upgrade = {
+  name: string;
+  description: string;
+  variable: number;
+  amount: number;
+};
+
 class MovingObject {
   xPos: number;
   yPos: number;
@@ -63,7 +70,7 @@ class Enemy extends MovingObject {
   minRadius: number;
   speed: number;
 
-  constructor(radius: number, speed: number, colour: string) {
+  constructor(radius: number, speedMultiplier: number, colour: string) {
     let xPos: number;
     let yPos: number;
 
@@ -77,7 +84,7 @@ class Enemy extends MovingObject {
 
     super(xPos, yPos, radius, colour);
     this.minRadius = this.radius;
-    this.speed = speed;
+    this.speed = enemyBaseSpeed * speedMultiplier;
   }
 
   update() {

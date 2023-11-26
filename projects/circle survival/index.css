@@ -4,13 +4,13 @@ body {
   background-color: black;
 }
 
-.score-display {
+.stat-display {
   position: fixed;
   color: white;
-  margin-left: 2px;
+  margin-left: 1rem;
   margin-top: 1px;
   user-select: none;
-  font-size: xx-large;
+  font-size: 2rem;
   display: none;
 }
 
@@ -26,25 +26,26 @@ body {
 .pause-display {
   display: none;
   color: white;
-  margin-top: 2rem;
+  margin-top: 5rem;
 }
 
-.game-over-display {
+.center-display {
   background-color: white;
   width: 24rem;
   padding: 1rem;
+  pointer-events: visible;
 }
 
-.game-over-display h1 {
+.center-display h1 {
   font-size: 3rem;
   line-height: 0;
 }
 
-.game-over-display p {
+.center-display p {
   font-size: 1.3rem;
 }
 
-.game-over-display button {
+.center-display button {
   background-color: rgb(59 130 246);
   color: white;
   width: 100%;
@@ -55,6 +56,7 @@ body {
 }
 
 .progress-div {
+  color: white;
   position: fixed;
   inset: 0;
   display: flex;
@@ -65,11 +67,22 @@ body {
   display: none;
 }
 
-.progress-div label {
-  display: none;
-}
-
 .progress-div progress {
   width: 34vw;
   height: 1.5rem;
+}
+
+.upgrade-display {
+  display: none;
+}
+
+.upgrade-options {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.upgrade-options div {
+  margin: 1rem;
+  min-width: 6.5rem;
 }
