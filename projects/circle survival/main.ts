@@ -174,7 +174,7 @@ function enemyHittingPlayer(enemy: Enemy, enemyIndex: number) {
 
     updateLife();
 
-    if ((lives = 0)) {
+    if (lives == 0) {
       cancelAnimationFrame(animationID);
       gameOverDisplay.style.display = "flex";
       finalScoreElement.innerHTML = score.toString();

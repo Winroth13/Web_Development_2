@@ -133,7 +133,7 @@ function enemyHittingPlayer(enemy, enemyIndex) {
     if (distance - enemy.radius - player.radius < 0) {
         lives--;
         updateLife();
-        if ((lives = 0)) {
+        if (lives == 0) {
             cancelAnimationFrame(animationID);
             gameOverDisplay.style.display = "flex";
             finalScoreElement.innerHTML = score.toString();
