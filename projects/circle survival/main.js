@@ -14,6 +14,7 @@ var experienceBar = document.querySelector("#experienceBar");
 var upgradeMessage = document.querySelector("#upgradeMessage");
 var upgradeDisplay = document.querySelector("#upgradeDisplay");
 var upgradeOptions = document.querySelector("#upgradeOptions");
+var aliasInput = document.querySelector("#aliasInput");
 var centerX = canvas.width / 2;
 var centerY = canvas.height / 2;
 var projectileSpeed = 5;
@@ -22,7 +23,6 @@ var playerAcceleration = 0.5;
 var particleFriction = 0.98;
 var enemyBaseSpeed = 2;
 var fps = 60;
-frames;
 var startingExperiencePerLevel = 10;
 var experiencePerLevelMultiplier = 1.5;
 var experiencePerKill = 5;
@@ -271,12 +271,17 @@ function newUpgrades() {
     }
 }
 startGameButton.addEventListener("click", function () {
-    gameOverDisplay.style.display = "none";
-    statDisplay.style.display = "block";
-    progressDisplay.style.display = "flex";
-    init();
-    addEventListener("click", createProjectile);
-    addEventListener("keydown", onKeyDown);
-    addEventListener("keyup", onKeyUp);
-    addEventListener("blur", pause);
+    if (aliasInput.value == "") {
+        alert("Username is required");
+    }
+    else {
+        gameOverDisplay.style.display = "none";
+        statDisplay.style.display = "block";
+        progressDisplay.style.display = "flex";
+        init();
+        addEventListener("click", createProjectile);
+        addEventListener("keydown", onKeyDown);
+        addEventListener("keyup", onKeyUp);
+        addEventListener("blur", pause);
+    }
 });

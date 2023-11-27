@@ -22,6 +22,8 @@ const upgradeMessage = document.querySelector<HTMLElement>("#upgradeMessage")!;
 const upgradeDisplay = document.querySelector<HTMLElement>("#upgradeDisplay")!;
 const upgradeOptions = document.querySelector<HTMLElement>("#upgradeOptions")!;
 
+const aliasInput = document.querySelector("#aliasInput")!;
+
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 
@@ -32,8 +34,6 @@ const particleFriction: number = 0.98;
 const enemyBaseSpeed: number = 2;
 
 const fps: number = 60;
-
-frames;
 
 let startingExperiencePerLevel: number = 10;
 const experiencePerLevelMultiplier: number = 1.5;
@@ -360,8 +360,8 @@ function newUpgrades() {
         window[upgrade.variable] += upgrade.amount;
 
         if (upgrade.function != undefined) {
-            eval(upgrade.function)
-          }
+          eval(upgrade.function);
+        }
 
         newUpgrades();
       }
@@ -370,14 +370,18 @@ function newUpgrades() {
 }
 
 startGameButton.addEventListener("click", () => {
-  gameOverDisplay.style.display = "none";
-  statDisplay.style.display = "block";
-  progressDisplay.style.display = "flex";
+  if (aliasInput.value == "") {
+    alert("Username is required");
+  } else {
+    gameOverDisplay.style.display = "none";
+    statDisplay.style.display = "block";
+    progressDisplay.style.display = "flex";
 
-  init();
+    init();
 
-  addEventListener("click", createProjectile);
-  addEventListener("keydown", onKeyDown);
-  addEventListener("keyup", onKeyUp);
-  addEventListener("blur", pause);
+    addEventListener("click", createProjectile);
+    addEventListener("keydown", onKeyDown);
+    addEventListener("keyup", onKeyUp);
+    addEventListener("blur", pause);
+  }
 });

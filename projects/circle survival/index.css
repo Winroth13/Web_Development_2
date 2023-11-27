@@ -4,6 +4,10 @@ body {
   background-color: black;
 }
 
+button:hover {
+  cursor: pointer;
+}
+
 .stat-display {
   position: fixed;
   color: white;
@@ -43,6 +47,11 @@ body {
 
 .center-display p {
   font-size: 1.3rem;
+}
+
+.center-display input {
+  font-size: 1rem;
+  margin-bottom: 1rem;
 }
 
 .center-display button {
