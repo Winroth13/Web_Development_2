@@ -22,6 +22,7 @@ var playerAcceleration = 0.5;
 var particleFriction = 0.98;
 var enemyBaseSpeed = 2;
 var fps = 60;
+frames;
 var startingExperiencePerLevel = 10;
 var experiencePerLevelMultiplier = 1.5;
 var experiencePerKill = 5;
@@ -33,25 +34,25 @@ var upgrades = [
     {
         name: "Deadlier Projectiles",
         description: "Damage Per Hit",
-        variable: projectileDamage,
+        variable: "projectileDamage",
         amount: 1,
     },
     {
         name: "Insert Name",
         description: "Current Lives",
-        variable: lives,
+        variable: "lives",
         amount: 1,
     },
     {
         name: "Faster Learning",
         description: "Experience Per Kill",
-        variable: experiencePerKill,
+        variable: "experiencePerKill",
         amount: 1,
     },
     {
         name: "Superiority Complex",
         description: "Superiority Feeling",
-        variable: superiority,
+        variable: "superiority",
         amount: 1,
     },
 ];
@@ -61,6 +62,7 @@ var enemies = [];
 var particles = [];
 var pressedKeys = [];
 var animationID;
+var animationIntervalID;
 var score;
 var enemySpawnDelay;
 var experiencePoints;
@@ -83,6 +85,8 @@ function init() {
     experiencePerLevel = startingExperiencePerLevel;
     updateExperienceBar();
     updateExperience(0);
+    newUpgrades();
+    startAnimation();
 }
 function spawnEnemy() {
     var newEnemy;
@@ -134,7 +138,7 @@ function enemyHittingPlayer(enemy, enemyIndex) {
         lives--;
         updateLife();
         if (lives == 0) {
-            cancelAnimationFrame(animationID);
+            clearInterval(animationIntervalID);
             gameOverDisplay.style.display = "flex";
             finalScoreElement.innerHTML = score.toString();
             statDisplay.style.display = "none";
@@ -193,8 +197,12 @@ function updateLife() {
 function updateExperienceBar() {
     experienceBar.setAttribute("max", experiencePerLevel.toString());
 }
+function startAnimation() {
+    animationIntervalID = setInterval(function () {
+        animationID = requestAnimationFrame(animate);
+    }, 1000 / fps);
+}
 function animate() {
-    animationID = requestAnimationFrame(animate);
     if (animationID % fps == 0) {
         score += 1;
         updateScore();
@@ -227,7 +235,7 @@ function newUpgrades() {
     while (upgradeOptions.hasChildNodes()) {
         upgradeOptions.removeChild(upgradeOptions.lastChild);
     }
-    for (var i = 0; i < 3; i++) {
+    var _loop_1 = function (i) {
         upgrade = upgrades[Math.floor(Math.random() * upgrades.length)];
         while (upgradeSelection.includes(upgrade)) {
             upgrade = upgrades[Math.floor(Math.random() * upgrades.length)];
@@ -236,20 +244,29 @@ function newUpgrades() {
         var div = document.createElement("div");
         newElement(div, "h2", upgrade.name);
         newElement(div, "p", upgrade.description);
-        newElement(div, "p", upgrade.variable + " => " + Number(upgrade.variable + upgrade.amount));
+        newElement(div, "p", window[upgrade.variable] + " => " + Number(window[upgrade.variable] + upgrade.amount));
         var button = newElement(div, "button", "Select");
         upgradeOptions.appendChild(div);
-        button.id = upgrade.name.replace(/\s/g, "");
+        upgrade.name = upgrade.name.replace(/\s/g, "");
+        button.id = upgrade.name;
         var buttonElement = document.querySelector("#" + button.id);
         buttonElement.addEventListener("click", function () {
             if (experiencePoints >= experiencePerLevel) {
                 updateExperience(experiencePoints - experiencePerLevel);
                 experiencePerLevel *= experiencePerLevelMultiplier;
                 updateExperienceBar();
-                upgrade.variable += upgrade.amount;
+                var upgrade_1 = upgradeSelection.find(function (upgrade) { return upgrade.name == buttonElement.id; });
+                window[upgrade_1.variable] += upgrade_1.amount;
                 newUpgrades();
+                console.log(upgrade_1.variable);
+                console.log(window[upgrade_1.variable]);
+                console.log(projectileDamage);
+                console.log(window["projectileDamage"]);
             }
         });
+    };
+    for (var i = 0; i < 3; i++) {
+        _loop_1(i);
     }
 }
 startGameButton.addEventListener("click", function () {
@@ -257,10 +274,8 @@ startGameButton.addEventListener("click", function () {
     statDisplay.style.display = "block";
     progressDisplay.style.display = "flex";
     init();
-    animate();
     addEventListener("click", createProjectile);
     addEventListener("keydown", onKeyDown);
     addEventListener("keyup", onKeyUp);
     addEventListener("blur", pause);
 });
-newUpgrades();

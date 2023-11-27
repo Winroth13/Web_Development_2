@@ -53,7 +53,7 @@ function playerKeyboardInput() {
     player.targetVelocity = newTargetVelocity;
 }
 function pause() {
-    cancelAnimationFrame(animationID);
+    clearInterval(animationIntervalID);
     if (paused == false) {
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -75,6 +75,6 @@ function unpause() {
     upgradeDisplay.style.display = "none";
     removeEventListener("click", unpause);
     addEventListener("click", createProjectile);
-    animate();
+    startAnimation();
     paused = false;
 }

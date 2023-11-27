@@ -33,6 +33,8 @@ const enemyBaseSpeed: number = 2;
 
 const fps: number = 60;
 
+frames;
+
 let startingExperiencePerLevel: number = 10;
 const experiencePerLevelMultiplier: number = 1.5;
 
@@ -46,25 +48,25 @@ const upgrades: upgrade[] = [
   {
     name: "Deadlier Projectiles",
     description: "Damage Per Hit",
-    variable: projectileDamage,
+    variable: "projectileDamage",
     amount: 1,
   },
   {
     name: "Insert Name",
     description: "Current Lives",
-    variable: lives,
+    variable: "lives",
     amount: 1,
   },
   {
     name: "Faster Learning",
     description: "Experience Per Kill",
-    variable: experiencePerKill,
+    variable: "experiencePerKill",
     amount: 1,
   },
   {
     name: "Superiority Complex",
     description: "Superiority Feeling",
-    variable: superiority,
+    variable: "superiority",
     amount: 1,
   },
 ];
@@ -78,6 +80,7 @@ let particles: Particle[] = [];
 let pressedKeys: string[] = [];
 
 let animationID: number;
+let animationIntervalID: number;
 let score: number;
 let enemySpawnDelay: number;
 let experiencePoints: number;
@@ -111,6 +114,10 @@ function init() {
   updateExperienceBar();
 
   updateExperience(0);
+
+  newUpgrades();
+
+  startAnimation();
 }
 
 function spawnEnemy() {
@@ -175,7 +182,7 @@ function enemyHittingPlayer(enemy: Enemy, enemyIndex: number) {
     updateLife();
 
     if (lives == 0) {
-      cancelAnimationFrame(animationID);
+      clearInterval(animationIntervalID);
       gameOverDisplay.style.display = "flex";
       finalScoreElement.innerHTML = score.toString();
       statDisplay.style.display = "none";
@@ -254,9 +261,13 @@ function updateExperienceBar() {
   experienceBar.setAttribute("max", experiencePerLevel.toString());
 }
 
-function animate() {
-  animationID = requestAnimationFrame(animate);
+function startAnimation() {
+  animationIntervalID = setInterval(() => {
+    animationID = requestAnimationFrame(animate);
+  }, 1000 / fps);
+}
 
+function animate() {
   if (animationID % fps == 0) {
     score += 1;
 
@@ -321,13 +332,15 @@ function newUpgrades() {
     newElement(
       div,
       "p",
-      upgrade.variable + " => " + Number(upgrade.variable + upgrade.amount)
+      window[upgrade.variable] + " => " + Number(window[upgrade.variable] + upgrade.amount)
     );
     let button = newElement(div, "button", "Select");
 
     upgradeOptions.appendChild(div);
 
-    button.id = upgrade.name.replace(/\s/g, "");
+    upgrade.name = upgrade.name.replace(/\s/g, "");
+
+    button.id = upgrade.name;
 
     let buttonElement = document.querySelector("#" + button.id)!;
 
@@ -339,9 +352,19 @@ function newUpgrades() {
 
         updateExperienceBar();
 
-        upgrade.variable += upgrade.amount;
+        let upgrade = upgradeSelection.find((upgrade) => upgrade.name == buttonElement.id)!;
+
+        window[upgrade.variable] += upgrade.amount;
 
         newUpgrades();
+
+        console.log(upgrade.variable);
+
+        console.log(window[upgrade.variable]);
+
+        console.log(projectileDamage);
+
+        console.log(window["projectileDamage"]);
       }
     });
   }
@@ -353,12 +376,9 @@ startGameButton.addEventListener("click", () => {
   progressDisplay.style.display = "flex";
 
   init();
-  animate();
 
   addEventListener("click", createProjectile);
   addEventListener("keydown", onKeyDown);
   addEventListener("keyup", onKeyUp);
   addEventListener("blur", pause);
 });
-
-newUpgrades();

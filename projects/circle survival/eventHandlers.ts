@@ -72,7 +72,7 @@ function playerKeyboardInput() {
 }
 
 function pause() {
-  cancelAnimationFrame(animationID);
+  clearInterval(animationIntervalID);
 
   if (paused == false) {
     ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
@@ -102,7 +102,7 @@ function unpause() {
   removeEventListener("click", unpause);
   addEventListener("click", createProjectile);
 
-  animate();
+  startAnimation();
 
   paused = false;
 }

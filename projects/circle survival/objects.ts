@@ -6,7 +6,7 @@ type velocity = {
 type upgrade = {
   name: string;
   description: string;
-  variable: number;
+  variable: string;
   amount: number;
 };
 
