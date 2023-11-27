@@ -11,6 +11,11 @@ type upgrade = {
   function?: string;
 };
 
+type highScore = {
+  name: string;
+  score: number;
+};
+
 class MovingObject {
   xPos: number;
   yPos: number;

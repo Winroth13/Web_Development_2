@@ -1,36 +1,37 @@
-var canvas = document.querySelector("canvas");
-var ctx = canvas.getContext("2d");
+"use strict";
+const canvas = document.querySelector("canvas");
+const ctx = canvas.getContext("2d");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
-var statDisplay = document.querySelector("#statDisplay");
-var scoreElement = document.querySelector("#scoreElement");
-var lifeElement = document.querySelector("#lifeElement");
-var gameOverDisplay = document.querySelector("#gameOverDisplay");
-var startGameButton = document.querySelector("#startGameButton");
-var finalScoreElement = document.querySelector("#finalScoreElement");
-var pauseDisplay = document.querySelector("#pauseDisplay");
-var progressDisplay = document.querySelector("#progressDisplay");
-var experienceBar = document.querySelector("#experienceBar");
-var upgradeMessage = document.querySelector("#upgradeMessage");
-var upgradeDisplay = document.querySelector("#upgradeDisplay");
-var upgradeOptions = document.querySelector("#upgradeOptions");
-var aliasInput = document.querySelector("#aliasInput");
-var centerX = canvas.width / 2;
-var centerY = canvas.height / 2;
-var projectileSpeed = 5;
-var playerMaxSpeed = 5;
-var playerAcceleration = 0.5;
-var particleFriction = 0.98;
-var enemyBaseSpeed = 2;
-var fps = 60;
-var startingExperiencePerLevel = 10;
-var experiencePerLevelMultiplier = 1.5;
-var experiencePerKill = 5;
-var projectileDamage = 5;
-var startingLives = 3;
-var lives = startingLives;
-var superiority = 0;
-var upgrades = [
+const statDisplay = document.querySelector("#statDisplay");
+const scoreElement = document.querySelector("#scoreElement");
+const lifeElement = document.querySelector("#lifeElement");
+const gameOverDisplay = document.querySelector("#gameOverDisplay");
+const startGameButton = document.querySelector("#startGameButton");
+const finalScoreElement = document.querySelector("#finalScoreElement");
+const pauseDisplay = document.querySelector("#pauseDisplay");
+const progressDisplay = document.querySelector("#progressDisplay");
+const experienceBar = document.querySelector("#experienceBar");
+const upgradeMessage = document.querySelector("#upgradeMessage");
+const upgradeDisplay = document.querySelector("#upgradeDisplay");
+const upgradeOptions = document.querySelector("#upgradeOptions");
+const aliasInput = document.querySelector("#aliasInput");
+const centerX = canvas.width / 2;
+const centerY = canvas.height / 2;
+const projectileSpeed = 5;
+const playerMaxSpeed = 5;
+const playerAcceleration = 0.5;
+const particleFriction = 0.98;
+const enemyBaseSpeed = 2;
+const fps = 60;
+let startingExperiencePerLevel = 10;
+const experiencePerLevelMultiplier = 1.5;
+let experiencePerKill = 5;
+let projectileDamage = 5;
+let startingLives = 3;
+let lives = startingLives;
+let superiority = 0;
+const upgrades = [
     {
         name: "Deadlier Projectiles",
         description: "Damage Per Hit",
@@ -57,19 +58,19 @@ var upgrades = [
         amount: 1,
     },
 ];
-var player = new Player(centerX, centerY, 10, "white");
-var projectiles = [];
-var enemies = [];
-var particles = [];
-var pressedKeys = [];
-var animationID;
-var animationIntervalID;
-var score;
-var enemySpawnDelay;
-var experiencePoints;
-var experiencePerLevel;
-var openUpgradeMenu = false;
-var paused = false;
+const player = new Player(centerX, centerY, 10, "white");
+let projectiles = [];
+let enemies = [];
+let particles = [];
+let pressedKeys = [];
+let animationID;
+let animationIntervalID;
+let score;
+let enemySpawnDelay;
+let experiencePoints;
+let experiencePerLevel;
+let openUpgradeMenu = false;
+let paused = false;
 function init() {
     player.xPos = centerX;
     player.yPos = centerY;
@@ -90,7 +91,7 @@ function init() {
     startAnimation();
 }
 function spawnEnemy() {
-    var newEnemy;
+    let newEnemy;
     if (Math.random() > score / 100) {
         newEnemy = new Enemy(20, 1, "red");
     }
@@ -109,22 +110,22 @@ function spawnEnemy() {
     enemies.push(newEnemy);
 }
 function updateProjectiles() {
-    projectiles.forEach(function (projectile, projectileIndex) {
+    projectiles.forEach((projectile, projectileIndex) => {
         projectile.draw();
         if (projectile.xPos + projectile.radius < 0 ||
             projectile.xPos - projectile.radius > canvas.width ||
             projectile.yPos + projectile.radius < 0 ||
             projectile.yPos - projectile.radius > canvas.height) {
-            setTimeout(function () {
+            setTimeout(() => {
                 projectiles.splice(projectileIndex, 1);
             }, 0);
         }
     });
 }
 function updateParticles() {
-    particles.forEach(function (particle, index) {
+    particles.forEach((particle, index) => {
         if (particle.alpha <= 0.01) {
-            setTimeout(function () {
+            setTimeout(() => {
                 particles.splice(index, 1);
             }, 0);
         }
@@ -133,32 +134,41 @@ function updateParticles() {
         }
     });
 }
+function endGame() {
+    clearInterval(animationIntervalID);
+    gameOverDisplay.style.display = "flex";
+    finalScoreElement.innerHTML = score.toString();
+    statDisplay.style.display = "none";
+    removeEventListener("click", createProjectile);
+    removeEventListener("keydown", onKeyDown);
+    removeEventListener("blur", pause);
+    console.log("object");
+    console.log({ name: aliasInput.value, score: score });
+    let highScore = { name: aliasInput.value, score: score };
+    highScoreList.push(highScore);
+    console.log(highScoreList);
+    localStorage.setItem("highScores", JSON.stringify(highScoreList));
+}
 function enemyHittingPlayer(enemy, enemyIndex) {
-    var distance = Math.hypot(player.xPos - enemy.xPos, player.yPos - enemy.yPos);
+    const distance = Math.hypot(player.xPos - enemy.xPos, player.yPos - enemy.yPos);
     if (distance - enemy.radius - player.radius < 0) {
         lives--;
         updateLife();
         if (lives == 0) {
-            clearInterval(animationIntervalID);
-            gameOverDisplay.style.display = "flex";
-            finalScoreElement.innerHTML = score.toString();
-            statDisplay.style.display = "none";
-            removeEventListener("click", createProjectile);
-            removeEventListener("keydown", onKeyDown);
-            removeEventListener("blur", pause);
+            endGame();
         }
         else {
-            setTimeout(function () {
+            setTimeout(() => {
                 enemies.splice(enemyIndex, 1);
             }, 0);
         }
     }
 }
 function projectileHittingEnemy(enemy, enemyIndex) {
-    projectiles.forEach(function (projectile, projectileIndex) {
-        var distance = Math.hypot(projectile.xPos - enemy.xPos, projectile.yPos - enemy.yPos);
+    projectiles.forEach((projectile, projectileIndex) => {
+        let distance = Math.hypot(projectile.xPos - enemy.xPos, projectile.yPos - enemy.yPos);
         if (distance - enemy.radius - projectile.radius < 0) {
-            for (var i = 0; i < enemy.radius * 2; i++) {
+            for (let i = 0; i < enemy.radius * 2; i++) {
                 particles.push(new Particle(projectile.xPos, projectile.yPos, Math.random() * 2, enemy.colour, {
                     x: (Math.random() - 0.5) * (Math.random() * 6),
                     y: (Math.random() - 0.5) * (Math.random() * 6),
@@ -169,11 +179,11 @@ function projectileHittingEnemy(enemy, enemyIndex) {
             }
             else {
                 updateExperience(experiencePoints + experiencePerKill);
-                setTimeout(function () {
+                setTimeout(() => {
                     enemies.splice(enemyIndex, 1);
                 }, 0);
             }
-            setTimeout(function () {
+            setTimeout(() => {
                 projectiles.splice(projectileIndex, 1);
             }, 0);
         }
@@ -199,7 +209,7 @@ function updateExperienceBar() {
     experienceBar.setAttribute("max", experiencePerLevel.toString());
 }
 function startAnimation() {
-    animationIntervalID = setInterval(function () {
+    animationIntervalID = setInterval(() => {
         animationID = requestAnimationFrame(animate);
     }, 1000 / fps);
 }
@@ -217,60 +227,57 @@ function animate() {
     player.draw();
     updateParticles();
     updateProjectiles();
-    enemies.forEach(function (enemy, enemyIndex) {
+    enemies.forEach((enemy, enemyIndex) => {
         enemy.draw();
         enemyHittingPlayer(enemy, enemyIndex);
         projectileHittingEnemy(enemy, enemyIndex);
     });
 }
 function newElement(parent, tag, text) {
-    var element = document.createElement(tag);
-    var elementText = document.createTextNode(text);
+    let element = document.createElement(tag);
+    let elementText = document.createTextNode(text);
     element.appendChild(elementText);
     parent.appendChild(element);
     return element;
 }
 function newUpgrades() {
-    var upgrade;
-    var upgradeSelection = [];
+    let upgrade;
+    let upgradeSelection = [];
     while (upgradeOptions.hasChildNodes()) {
         upgradeOptions.removeChild(upgradeOptions.lastChild);
     }
-    var _loop_1 = function (i) {
+    for (let i = 0; i < 3; i++) {
         upgrade = upgrades[Math.floor(Math.random() * upgrades.length)];
         while (upgradeSelection.includes(upgrade)) {
             upgrade = upgrades[Math.floor(Math.random() * upgrades.length)];
         }
         upgradeSelection.push(upgrade);
-        var div = document.createElement("div");
+        let div = document.createElement("div");
         newElement(div, "h2", upgrade.name);
         newElement(div, "p", upgrade.description);
         newElement(div, "p", window[upgrade.variable] +
             " => " +
             Number(window[upgrade.variable] + upgrade.amount));
-        var button = newElement(div, "button", "Select");
+        let button = newElement(div, "button", "Select");
         upgradeOptions.appendChild(div);
         button.id = upgrade.variable;
-        var buttonElement = document.querySelector("#" + button.id);
-        buttonElement.addEventListener("click", function () {
+        let buttonElement = document.querySelector("#" + button.id);
+        buttonElement.addEventListener("click", () => {
             if (experiencePoints >= experiencePerLevel) {
                 updateExperience(experiencePoints - experiencePerLevel);
                 experiencePerLevel *= experiencePerLevelMultiplier;
                 updateExperienceBar();
-                var upgrade_1 = upgradeSelection.find(function (upgrade) { return upgrade.variable == buttonElement.id; });
-                window[upgrade_1.variable] += upgrade_1.amount;
-                if (upgrade_1.function != undefined) {
-                    eval(upgrade_1.function);
+                let upgrade = upgradeSelection.find((upgrade) => upgrade.variable == buttonElement.id);
+                window[upgrade.variable] += upgrade.amount;
+                if (upgrade.function != undefined) {
+                    eval(upgrade.function);
                 }
                 newUpgrades();
             }
         });
-    };
-    for (var i = 0; i < 3; i++) {
-        _loop_1(i);
     }
 }
-startGameButton.addEventListener("click", function () {
+startGameButton.addEventListener("click", () => {
     if (aliasInput.value == "") {
         alert("Username is required");
     }
@@ -285,3 +292,5 @@ startGameButton.addEventListener("click", function () {
         addEventListener("blur", pause);
     }
 });
+let highScoreList = [];
+// let highScoreList: highScore[] = JSON.parse(localStorage.getItem("highScores")!);

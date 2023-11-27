@@ -1,6 +1,7 @@
+"use strict";
 function createProjectile(event) {
-    var angle = Math.atan2(event.clientY - player.yPos, event.clientX - player.xPos);
-    var velocity = {
+    let angle = Math.atan2(event.clientY - player.yPos, event.clientX - player.xPos);
+    let velocity = {
         x: Math.cos(angle) * projectileSpeed,
         y: Math.sin(angle) * projectileSpeed,
     };
@@ -17,10 +18,10 @@ function onKeyUp(event) {
     playerKeyboardInput();
 }
 function playerKeyboardInput() {
-    var moveUp = pressedKeys.includes("w") || pressedKeys.includes("ArrowUp");
-    var moveDown = pressedKeys.includes("s") || pressedKeys.includes("ArrowDown");
-    var moveLeft = pressedKeys.includes("a") || pressedKeys.includes("ArrowLeft");
-    var moveRight = pressedKeys.includes("d") || pressedKeys.includes("ArrowRight");
+    let moveUp = pressedKeys.includes("w") || pressedKeys.includes("ArrowUp");
+    let moveDown = pressedKeys.includes("s") || pressedKeys.includes("ArrowDown");
+    let moveLeft = pressedKeys.includes("a") || pressedKeys.includes("ArrowLeft");
+    let moveRight = pressedKeys.includes("d") || pressedKeys.includes("ArrowRight");
     if (pressedKeys.includes("q")) {
         openUpgradeMenu = !openUpgradeMenu;
         if (openUpgradeMenu == true) {
@@ -33,7 +34,7 @@ function playerKeyboardInput() {
     if (pressedKeys.includes("Escape") && paused == false) {
         pause();
     }
-    var newTargetVelocity = { x: 0, y: 0 };
+    let newTargetVelocity = { x: 0, y: 0 };
     if (moveUp && !moveDown) {
         newTargetVelocity.y = -playerMaxSpeed;
     }

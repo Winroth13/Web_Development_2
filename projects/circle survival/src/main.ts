@@ -171,6 +171,29 @@ function updateParticles() {
   });
 }
 
+function endGame() {
+  clearInterval(animationIntervalID);
+  gameOverDisplay.style.display = "flex";
+  finalScoreElement.innerHTML = score.toString();
+  statDisplay.style.display = "none";
+
+  removeEventListener("click", createProjectile);
+  removeEventListener("keydown", onKeyDown);
+  removeEventListener("blur", pause);
+
+  console.log("object");
+
+  console.log({ name: aliasInput.value, score: score });
+
+  let highScore: highScore = { name: aliasInput.value, score: score };
+
+  highScoreList.push(highScore);
+
+  console.log(highScoreList);
+
+  localStorage.setItem("highScores", JSON.stringify(highScoreList));
+}
+
 function enemyHittingPlayer(enemy: Enemy, enemyIndex: number) {
   const distance = Math.hypot(
     player.xPos - enemy.xPos,
@@ -183,14 +206,7 @@ function enemyHittingPlayer(enemy: Enemy, enemyIndex: number) {
     updateLife();
 
     if (lives == 0) {
-      clearInterval(animationIntervalID);
-      gameOverDisplay.style.display = "flex";
-      finalScoreElement.innerHTML = score.toString();
-      statDisplay.style.display = "none";
-
-      removeEventListener("click", createProjectile);
-      removeEventListener("keydown", onKeyDown);
-      removeEventListener("blur", pause);
+      endGame();
     } else {
       setTimeout(() => {
         enemies.splice(enemyIndex, 1);
@@ -385,3 +401,6 @@ startGameButton.addEventListener("click", () => {
     addEventListener("blur", pause);
   }
 });
+
+let highScoreList: highScore[] = [];
+// let highScoreList: highScore[] = JSON.parse(localStorage.getItem("highScores")!);
