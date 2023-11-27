@@ -42,6 +42,7 @@ var upgrades = [
         description: "Current Lives",
         variable: "lives",
         amount: 1,
+        function: "updateLife()",
     },
     {
         name: "Faster Learning",
@@ -244,24 +245,24 @@ function newUpgrades() {
         var div = document.createElement("div");
         newElement(div, "h2", upgrade.name);
         newElement(div, "p", upgrade.description);
-        newElement(div, "p", window[upgrade.variable] + " => " + Number(window[upgrade.variable] + upgrade.amount));
+        newElement(div, "p", window[upgrade.variable] +
+            " => " +
+            Number(window[upgrade.variable] + upgrade.amount));
         var button = newElement(div, "button", "Select");
         upgradeOptions.appendChild(div);
-        upgrade.name = upgrade.name.replace(/\s/g, "");
-        button.id = upgrade.name;
+        button.id = upgrade.variable;
         var buttonElement = document.querySelector("#" + button.id);
         buttonElement.addEventListener("click", function () {
             if (experiencePoints >= experiencePerLevel) {
                 updateExperience(experiencePoints - experiencePerLevel);
                 experiencePerLevel *= experiencePerLevelMultiplier;
                 updateExperienceBar();
-                var upgrade_1 = upgradeSelection.find(function (upgrade) { return upgrade.name == buttonElement.id; });
+                var upgrade_1 = upgradeSelection.find(function (upgrade) { return upgrade.variable == buttonElement.id; });
                 window[upgrade_1.variable] += upgrade_1.amount;
+                if (upgrade_1.function != undefined) {
+                    eval(upgrade_1.function);
+                }
                 newUpgrades();
-                console.log(upgrade_1.variable);
-                console.log(window[upgrade_1.variable]);
-                console.log(projectileDamage);
-                console.log(window["projectileDamage"]);
             }
         });
     };

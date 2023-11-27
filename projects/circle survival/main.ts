@@ -56,6 +56,7 @@ const upgrades: upgrade[] = [
     description: "Current Lives",
     variable: "lives",
     amount: 1,
+    function: "updateLife()",
   },
   {
     name: "Faster Learning",
@@ -332,15 +333,15 @@ function newUpgrades() {
     newElement(
       div,
       "p",
-      window[upgrade.variable] + " => " + Number(window[upgrade.variable] + upgrade.amount)
+      window[upgrade.variable] +
+        " => " +
+        Number(window[upgrade.variable] + upgrade.amount)
     );
     let button = newElement(div, "button", "Select");
 
     upgradeOptions.appendChild(div);
 
-    upgrade.name = upgrade.name.replace(/\s/g, "");
-
-    button.id = upgrade.name;
+    button.id = upgrade.variable;
 
     let buttonElement = document.querySelector("#" + button.id)!;
 
@@ -352,19 +353,17 @@ function newUpgrades() {
 
         updateExperienceBar();
 
-        let upgrade = upgradeSelection.find((upgrade) => upgrade.name == buttonElement.id)!;
+        let upgrade = upgradeSelection.find(
+          (upgrade) => upgrade.variable == buttonElement.id
+        )!;
 
         window[upgrade.variable] += upgrade.amount;
 
+        if (upgrade.function != undefined) {
+            eval(upgrade.function)
+          }
+
         newUpgrades();
-
-        console.log(upgrade.variable);
-
-        console.log(window[upgrade.variable]);
-
-        console.log(projectileDamage);
-
-        console.log(window["projectileDamage"]);
       }
     });
   }

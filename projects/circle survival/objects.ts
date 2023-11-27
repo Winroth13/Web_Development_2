@@ -8,6 +8,7 @@ type upgrade = {
   description: string;
   variable: string;
   amount: number;
+  function?: string;
 };
 
 class MovingObject {
