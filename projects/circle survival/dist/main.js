@@ -255,9 +255,9 @@ function newUpgrades() {
         let div = document.createElement("div");
         newElement(div, "h2", upgrade.name);
         newElement(div, "p", upgrade.description);
-        newElement(div, "p", window[upgrade.variable] +
+        newElement(div, "p", eval(upgrade.variable) +
             " => " +
-            Number(window[upgrade.variable] + upgrade.amount));
+            (eval(upgrade.variable) + upgrade.amount));
         let button = newElement(div, "button", "Select");
         upgradeOptions.appendChild(div);
         button.id = upgrade.variable;
@@ -268,7 +268,7 @@ function newUpgrades() {
                 experiencePerLevel *= experiencePerLevelMultiplier;
                 updateExperienceBar();
                 let upgrade = upgradeSelection.find((upgrade) => upgrade.variable == buttonElement.id);
-                window[upgrade.variable] += upgrade.amount;
+                // window[upgrade.variable] += upgrade.amount;
                 if (upgrade.function != undefined) {
                     eval(upgrade.function);
                 }
@@ -286,10 +286,12 @@ startGameButton.addEventListener("click", () => {
         statDisplay.style.display = "block";
         progressDisplay.style.display = "flex";
         init();
-        addEventListener("click", createProjectile);
         addEventListener("keydown", onKeyDown);
         addEventListener("keyup", onKeyUp);
         addEventListener("blur", pause);
+        setTimeout(() => {
+            addEventListener("click", createProjectile);
+        });
     }
 });
 let highScoreList = [];

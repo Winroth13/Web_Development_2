@@ -349,9 +349,9 @@ function newUpgrades() {
     newElement(
       div,
       "p",
-      window[upgrade.variable] +
+      eval(upgrade.variable) +
         " => " +
-        Number(window[upgrade.variable] + upgrade.amount)
+        (eval(upgrade.variable) + upgrade.amount)
     );
     let button = newElement(div, "button", "Select");
 
@@ -373,7 +373,7 @@ function newUpgrades() {
           (upgrade) => upgrade.variable == buttonElement.id
         )!;
 
-        window[upgrade.variable] += upgrade.amount;
+        // window[upgrade.variable] += upgrade.amount;
 
         if (upgrade.function != undefined) {
           eval(upgrade.function);
@@ -395,10 +395,13 @@ startGameButton.addEventListener("click", () => {
 
     init();
 
-    addEventListener("click", createProjectile);
     addEventListener("keydown", onKeyDown);
     addEventListener("keyup", onKeyUp);
     addEventListener("blur", pause);
+
+    setTimeout(() => {
+      addEventListener("click", createProjectile);
+    });
   }
 });
 
