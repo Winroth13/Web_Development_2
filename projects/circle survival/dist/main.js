@@ -26,35 +26,35 @@ const enemyBaseSpeed = 2;
 const fps = 60;
 let startingExperiencePerLevel = 10;
 const experiencePerLevelMultiplier = 1.5;
-let experiencePerKill = 5;
-let projectileDamage = 5;
+let experiencePerKill = { number: 5 };
+let projectileDamage = { number: 5 };
 let startingLives = 3;
-let lives = startingLives;
-let superiority = 0;
+let lives = { number: startingLives };
+let superiority = { number: 0 };
 const upgrades = [
     {
         name: "Deadlier Projectiles",
         description: "Damage Per Hit",
-        variable: "projectileDamage",
+        variable: projectileDamage,
         amount: 1,
     },
     {
         name: "Insert Name",
         description: "Current Lives",
-        variable: "lives",
+        variable: lives,
         amount: 1,
         function: "updateLife()",
     },
     {
         name: "Faster Learning",
         description: "Experience Per Kill",
-        variable: "experiencePerKill",
+        variable: experiencePerKill,
         amount: 1,
     },
     {
         name: "Superiority Complex",
         description: "Superiority Feeling",
-        variable: "superiority",
+        variable: superiority,
         amount: 1,
     },
 ];
@@ -71,6 +71,7 @@ let experiencePoints;
 let experiencePerLevel;
 let openUpgradeMenu = false;
 let paused = false;
+let highScoreList;
 function init() {
     player.xPos = centerX;
     player.yPos = centerY;
@@ -80,7 +81,7 @@ function init() {
     projectiles = [];
     enemies = [];
     particles = [];
-    lives = startingLives;
+    lives.number = startingLives;
     updateLife();
     score = 0;
     updateScore();
@@ -143,18 +144,23 @@ function endGame() {
     removeEventListener("keydown", onKeyDown);
     removeEventListener("blur", pause);
     console.log("object");
+    // @ts-ignore
     console.log({ name: aliasInput.value, score: score });
+    // @ts-ignore
     let highScore = { name: aliasInput.value, score: score };
     highScoreList.push(highScore);
+    highScoreList.sort((a, b) => {
+        return b.score - a.score;
+    });
     console.log(highScoreList);
     localStorage.setItem("highScores", JSON.stringify(highScoreList));
 }
 function enemyHittingPlayer(enemy, enemyIndex) {
     const distance = Math.hypot(player.xPos - enemy.xPos, player.yPos - enemy.yPos);
     if (distance - enemy.radius - player.radius < 0) {
-        lives--;
+        lives.number--;
         updateLife();
-        if (lives == 0) {
+        if (lives.number == 0) {
             endGame();
         }
         else {
@@ -175,10 +181,11 @@ function projectileHittingEnemy(enemy, enemyIndex) {
                 }));
             }
             if (enemy.minRadius >= 20) {
-                enemy.minRadius -= projectileDamage;
+                enemy.minRadius -= projectileDamage.number;
+                console.log(enemy.minRadius);
             }
             else {
-                updateExperience(experiencePoints + experiencePerKill);
+                updateExperience(experiencePoints + experiencePerKill.number);
                 setTimeout(() => {
                     enemies.splice(enemyIndex, 1);
                 }, 0);
@@ -203,7 +210,7 @@ function updateScore() {
     scoreElement.innerHTML = "Score: " + score.toString();
 }
 function updateLife() {
-    lifeElement.innerHTML = "Lives: " + lives.toString();
+    lifeElement.innerHTML = "Lives: " + lives.number.toString();
 }
 function updateExperienceBar() {
     experienceBar.setAttribute("max", experiencePerLevel.toString());
@@ -255,20 +262,22 @@ function newUpgrades() {
         let div = document.createElement("div");
         newElement(div, "h2", upgrade.name);
         newElement(div, "p", upgrade.description);
-        newElement(div, "p", eval(upgrade.variable) +
+        newElement(div, "p", upgrade.variable.number +
             " => " +
-            (eval(upgrade.variable) + upgrade.amount));
+            (upgrade.variable.number + upgrade.amount));
         let button = newElement(div, "button", "Select");
         upgradeOptions.appendChild(div);
-        button.id = upgrade.variable;
+        button.id = upgrade.name.replace(/\s/g, "");
         let buttonElement = document.querySelector("#" + button.id);
         buttonElement.addEventListener("click", () => {
             if (experiencePoints >= experiencePerLevel) {
                 updateExperience(experiencePoints - experiencePerLevel);
                 experiencePerLevel *= experiencePerLevelMultiplier;
                 updateExperienceBar();
-                let upgrade = upgradeSelection.find((upgrade) => upgrade.variable == buttonElement.id);
-                // window[upgrade.variable] += upgrade.amount;
+                let upgrade = upgradeSelection.find((upgrade) => upgrade.name.replace(/\s/g, "") == buttonElement.id);
+                upgrade.variable.number += upgrade.amount;
+                console.log(projectileDamage);
+                console.log(upgrade.variable.number);
                 if (upgrade.function != undefined) {
                     eval(upgrade.function);
                 }
@@ -278,6 +287,7 @@ function newUpgrades() {
     }
 }
 startGameButton.addEventListener("click", () => {
+    // @ts-ignore
     if (aliasInput.value == "") {
         alert("Username is required");
     }
@@ -294,5 +304,8 @@ startGameButton.addEventListener("click", () => {
         });
     }
 });
-let highScoreList = [];
-// let highScoreList: highScore[] = JSON.parse(localStorage.getItem("highScores")!);
+highScoreList = JSON.parse(localStorage.getItem("highScores"));
+if (highScoreList == null) {
+    highScoreList = [];
+}
+console.log(highScoreList);

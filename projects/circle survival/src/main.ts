@@ -38,36 +38,36 @@ const fps: number = 60;
 let startingExperiencePerLevel: number = 10;
 const experiencePerLevelMultiplier: number = 1.5;
 
-let experiencePerKill: number = 5;
-let projectileDamage: number = 5;
+let experiencePerKill = { number: 5 };
+let projectileDamage = { number: 5 };
 let startingLives: number = 3;
-let lives: number = startingLives;
-let superiority: number = 0;
+let lives = { number: startingLives };
+let superiority = { number: 0 };
 
 const upgrades: upgrade[] = [
   {
     name: "Deadlier Projectiles",
     description: "Damage Per Hit",
-    variable: "projectileDamage",
+    variable: projectileDamage,
     amount: 1,
   },
   {
     name: "Insert Name",
     description: "Current Lives",
-    variable: "lives",
+    variable: lives,
     amount: 1,
     function: "updateLife()",
   },
   {
     name: "Faster Learning",
     description: "Experience Per Kill",
-    variable: "experiencePerKill",
+    variable: experiencePerKill,
     amount: 1,
   },
   {
     name: "Superiority Complex",
     description: "Superiority Feeling",
-    variable: "superiority",
+    variable: superiority,
     amount: 1,
   },
 ];
@@ -90,6 +90,8 @@ let experiencePerLevel: number;
 let openUpgradeMenu: boolean = false;
 let paused: boolean = false;
 
+let highScoreList: highScore[];
+
 function init() {
   player.xPos = centerX;
   player.yPos = centerY;
@@ -102,7 +104,7 @@ function init() {
   enemies = [];
   particles = [];
 
-  lives = startingLives;
+  lives.number = startingLives;
 
   updateLife();
 
@@ -183,11 +185,17 @@ function endGame() {
 
   console.log("object");
 
+  // @ts-ignore
   console.log({ name: aliasInput.value, score: score });
 
+  // @ts-ignore
   let highScore: highScore = { name: aliasInput.value, score: score };
 
   highScoreList.push(highScore);
+
+  highScoreList.sort((a, b) => {
+    return b.score - a.score;
+  });
 
   console.log(highScoreList);
 
@@ -201,11 +209,11 @@ function enemyHittingPlayer(enemy: Enemy, enemyIndex: number) {
   );
 
   if (distance - enemy.radius - player.radius < 0) {
-    lives--;
+    lives.number--;
 
     updateLife();
 
-    if (lives == 0) {
+    if (lives.number == 0) {
       endGame();
     } else {
       setTimeout(() => {
@@ -239,9 +247,11 @@ function projectileHittingEnemy(enemy: Enemy, enemyIndex: number) {
       }
 
       if (enemy.minRadius >= 20) {
-        enemy.minRadius -= projectileDamage;
+        enemy.minRadius -= projectileDamage.number;
+
+        console.log(enemy.minRadius);
       } else {
-        updateExperience(experiencePoints + experiencePerKill);
+        updateExperience(experiencePoints + experiencePerKill.number);
 
         setTimeout(() => {
           enemies.splice(enemyIndex, 1);
@@ -271,7 +281,7 @@ function updateScore() {
 }
 
 function updateLife() {
-  lifeElement.innerHTML = "Lives: " + lives.toString();
+  lifeElement.innerHTML = "Lives: " + lives.number.toString();
 }
 
 function updateExperienceBar() {
@@ -349,15 +359,15 @@ function newUpgrades() {
     newElement(
       div,
       "p",
-      eval(upgrade.variable) +
+      upgrade.variable.number +
         " => " +
-        (eval(upgrade.variable) + upgrade.amount)
+        (upgrade.variable.number + upgrade.amount)
     );
     let button = newElement(div, "button", "Select");
 
     upgradeOptions.appendChild(div);
 
-    button.id = upgrade.variable;
+    button.id = upgrade.name.replace(/\s/g, "");
 
     let buttonElement = document.querySelector("#" + button.id)!;
 
@@ -370,10 +380,14 @@ function newUpgrades() {
         updateExperienceBar();
 
         let upgrade = upgradeSelection.find(
-          (upgrade) => upgrade.variable == buttonElement.id
+          (upgrade) => upgrade.name.replace(/\s/g, "") == buttonElement.id
         )!;
 
-        // window[upgrade.variable] += upgrade.amount;
+        upgrade.variable.number += upgrade.amount;
+
+        console.log(projectileDamage);
+
+        console.log(upgrade.variable.number);
 
         if (upgrade.function != undefined) {
           eval(upgrade.function);
@@ -386,6 +400,7 @@ function newUpgrades() {
 }
 
 startGameButton.addEventListener("click", () => {
+  // @ts-ignore
   if (aliasInput.value == "") {
     alert("Username is required");
   } else {
@@ -405,5 +420,10 @@ startGameButton.addEventListener("click", () => {
   }
 });
 
-let highScoreList: highScore[] = [];
-// let highScoreList: highScore[] = JSON.parse(localStorage.getItem("highScores")!);
+highScoreList = JSON.parse(localStorage.getItem("highScores")!);
+
+if (highScoreList == null) {
+  highScoreList = [];
+}
+
+console.log(highScoreList);
