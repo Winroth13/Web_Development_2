@@ -22,6 +22,11 @@ const upgradeMessage = document.querySelector<HTMLElement>("#upgradeMessage")!;
 const upgradeDisplay = document.querySelector<HTMLElement>("#upgradeDisplay")!;
 const upgradeOptions = document.querySelector<HTMLElement>("#upgradeOptions")!;
 
+const scoreboardDisplay =
+  document.querySelector<HTMLElement>("#scoreboardDisplay")!;
+const scoreboardTable =
+  document.querySelector<HTMLElement>("#scoreboardTable")!;
+
 const aliasInput = document.querySelector("#aliasInput")!;
 
 const centerX = canvas.width / 2;
@@ -176,8 +181,11 @@ function updateParticles() {
 function endGame() {
   clearInterval(animationIntervalID);
   gameOverDisplay.style.display = "flex";
-  finalScoreElement.innerHTML = score.toString();
+  scoreboardDisplay.style.display = "flex";
   statDisplay.style.display = "none";
+  progressDisplay.style.display = "none";
+
+  finalScoreElement.innerHTML = score.toString();
 
   removeEventListener("click", createProjectile);
   removeEventListener("keydown", onKeyDown);
@@ -197,9 +205,9 @@ function endGame() {
     return b.score - a.score;
   });
 
-  console.log(highScoreList);
-
   localStorage.setItem("highScores", JSON.stringify(highScoreList));
+
+  updateHighscores();
 }
 
 function enemyHittingPlayer(enemy: Enemy, enemyIndex: number) {
@@ -385,10 +393,6 @@ function newUpgrades() {
 
         upgrade.variable.number += upgrade.amount;
 
-        console.log(projectileDamage);
-
-        console.log(upgrade.variable.number);
-
         if (upgrade.function != undefined) {
           eval(upgrade.function);
         }
@@ -399,12 +403,41 @@ function newUpgrades() {
   }
 }
 
+function updateHighscores() {
+  let highScore: highScore;
+
+  while (scoreboardTable.hasChildNodes()) {
+    scoreboardTable.removeChild(scoreboardTable.lastChild!);
+  }
+
+  for (let i = 0; i < 5; i++) {
+    if (highScoreList.length > i) {
+      highScore = highScoreList[i];
+    } else {
+      highScore = {
+        name: "-",
+        score: 0,
+      };
+    }
+    let tableRow = document.createElement("tr");
+
+    newElement(tableRow, "th", highScore.name);
+    newElement(tableRow, "th", highScore.score.toString());
+
+    scoreboardTable.appendChild(tableRow);
+  }
+}
+
 startGameButton.addEventListener("click", () => {
   // @ts-ignore
   if (aliasInput.value == "") {
-    alert("Username is required");
+    alert("Username is required.");
+    // @ts-ignore
+  } else if (aliasInput.value.length > 12) {
+    alert("Username cannot be longer than 12 characters.");
   } else {
     gameOverDisplay.style.display = "none";
+    scoreboardDisplay.style.display = "none";
     statDisplay.style.display = "block";
     progressDisplay.style.display = "flex";
 
@@ -426,4 +459,4 @@ if (highScoreList == null) {
   highScoreList = [];
 }
 
-console.log(highScoreList);
+updateHighscores();

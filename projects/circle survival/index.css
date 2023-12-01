@@ -25,6 +25,7 @@ button:hover {
   align-items: center;
   justify-content: center;
   text-align: center;
+  flex-direction: column;
 }
 
 .pause-display {
@@ -94,4 +95,40 @@ button:hover {
 .upgrade-options div {
   margin: 1rem;
   min-width: 6.5rem;
+}
+
+.scoreboard-div {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+  right: 20vw;
+  top: 50%;
+  transform: translate(50%, -50%);
+}
+
+.scoreboard-display {
+  background-color: white;
+  padding: 1rem;
+  width: 12rem;
+  justify-content: center;
+}
+
+.scoreboard-display div {
+  display: inline-block;
+  width: 100%;
+}
+
+.scoreboard-table {
+  border: 1px solid;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.scoreboard-table tr {
+  border-bottom: 1px solid black;
+  font-size: 1.5rem;
+  width: 5rem;
 }

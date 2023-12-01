@@ -45,6 +45,18 @@ class Player extends MovingObject {
         }
         this.xPos += this.velocity.x;
         this.yPos += this.velocity.y;
+        if (this.xPos - this.radius < 0) {
+            this.xPos = this.radius;
+        }
+        else if (this.xPos + this.radius > canvas.width) {
+            this.xPos = canvas.width - this.radius;
+        }
+        if (this.yPos - this.radius < 0) {
+            this.yPos = this.radius;
+        }
+        else if (this.yPos + this.radius > canvas.height) {
+            this.yPos = canvas.height - this.radius;
+        }
     }
 }
 class Enemy extends MovingObject {
