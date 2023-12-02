@@ -57,7 +57,7 @@ class Player extends MovingObject {
   update() {
     if (this.velocity.y < this.targetVelocity.y) {
       if (this.velocity.y + playerAcceleration < this.targetVelocity.y) {
-        this.velocity.y = this.targetVelocity.y
+        this.velocity.y = this.targetVelocity.y;
       } else {
         this.velocity.y += playerAcceleration;
       }
