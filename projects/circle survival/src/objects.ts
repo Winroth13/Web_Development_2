@@ -56,15 +56,31 @@ class Player extends MovingObject {
 
   update() {
     if (this.velocity.y < this.targetVelocity.y) {
-      this.velocity.y += playerAcceleration;
+      if (this.velocity.y + playerAcceleration < this.targetVelocity.y) {
+        this.velocity.y = this.targetVelocity.y
+      } else {
+        this.velocity.y += playerAcceleration;
+      }
     } else if (this.velocity.y > this.targetVelocity.y) {
-      this.velocity.y -= playerAcceleration;
+      if (this.velocity.y - playerAcceleration > this.targetVelocity.y) {
+        this.velocity.y = this.targetVelocity.y;
+      } else {
+        this.velocity.y -= playerAcceleration;
+      }
     }
 
     if (this.velocity.x < this.targetVelocity.x) {
-      this.velocity.x += playerAcceleration;
+      if (this.velocity.x + playerAcceleration < this.targetVelocity.x) {
+        this.velocity.x = this.targetVelocity.x;
+      } else {
+        this.velocity.x += playerAcceleration;
+      }
     } else if (this.velocity.x > this.targetVelocity.x) {
-      this.velocity.x -= playerAcceleration;
+      if (this.velocity.x - playerAcceleration > this.targetVelocity.x) {
+        this.velocity.x = this.targetVelocity.x;
+      } else {
+        this.velocity.x -= playerAcceleration;
+      }
     }
 
     this.xPos += this.velocity.x;
