@@ -27,16 +27,25 @@ const scoreboardDisplay =
 const scoreboardTable =
   document.querySelector<HTMLElement>("#scoreboardTable")!;
 
+const controlsDisplay =
+  document.querySelector<HTMLElement>("#controlsDisplay")!;
+
 const aliasInput = document.querySelector("#aliasInput")!;
+
+const standardResolution: number = 1080 * 1920;
+const widnowResuliton: number = canvas.height * canvas.width;
+
+const screenSizeMultiplier: number = widnowResuliton / standardResolution;
 
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 
-const projectileSpeed: number = 5;
-const playerMaxSpeed: number = 5;
-const playerAcceleration: number = 0.5;
+const projectileSpeed: number = 7 * screenSizeMultiplier;
+const playerMaxSpeed: number = 5 * screenSizeMultiplier;
+const playerAcceleration: number = 0.5 * screenSizeMultiplier;
 const particleFriction: number = 0.98;
-const enemyBaseSpeed: number = 2;
+const enemyBaseSpeed: number = 2 * screenSizeMultiplier;
+const particleSpeed: number = 6 * screenSizeMultiplier;
 
 const fps: number = 60;
 
@@ -108,6 +117,10 @@ function init() {
   projectiles = [];
   enemies = [];
   particles = [];
+
+  experiencePerKill.number = 5;
+  projectileDamage.number = 5;
+  superiority.number = 0;
 
   lives.number = startingLives;
 
@@ -182,6 +195,7 @@ function endGame() {
   clearInterval(animationIntervalID);
   gameOverDisplay.style.display = "flex";
   scoreboardDisplay.style.display = "flex";
+  controlsDisplay.style.display = "flex";
   statDisplay.style.display = "none";
   progressDisplay.style.display = "none";
 
@@ -190,11 +204,6 @@ function endGame() {
   removeEventListener("click", createProjectile);
   removeEventListener("keydown", onKeyDown);
   removeEventListener("blur", pause);
-
-  console.log("object");
-
-  // @ts-ignore
-  console.log({ name: aliasInput.value, score: score });
 
   // @ts-ignore
   let highScore: highScore = { name: aliasInput.value, score: score };
@@ -247,8 +256,8 @@ function projectileHittingEnemy(enemy: Enemy, enemyIndex: number) {
             Math.random() * 2,
             enemy.colour,
             {
-              x: (Math.random() - 0.5) * (Math.random() * 6),
-              y: (Math.random() - 0.5) * (Math.random() * 6),
+              x: (Math.random() - 0.5) * (Math.random() * particleSpeed),
+              y: (Math.random() - 0.5) * (Math.random() * particleSpeed),
             }
           )
         );
@@ -256,8 +265,6 @@ function projectileHittingEnemy(enemy: Enemy, enemyIndex: number) {
 
       if (enemy.minRadius >= 20) {
         enemy.minRadius -= projectileDamage.number;
-
-        console.log(enemy.minRadius);
       } else {
         updateExperience(experiencePoints + experiencePerKill.number);
 
@@ -438,6 +445,7 @@ startGameButton.addEventListener("click", () => {
   } else {
     gameOverDisplay.style.display = "none";
     scoreboardDisplay.style.display = "none";
+    controlsDisplay.style.display = "none";
     statDisplay.style.display = "block";
     progressDisplay.style.display = "flex";
 

@@ -97,38 +97,56 @@ button:hover {
   min-width: 6.5rem;
 }
 
-.scoreboard-div {
+.side-div {
   position: fixed;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   flex-direction: column;
-  right: 20vw;
   top: 50%;
-  transform: translate(50%, -50%);
 }
 
-.scoreboard-display {
+.side-display {
   background-color: white;
   padding: 1rem;
   width: 12rem;
   justify-content: center;
 }
 
-.scoreboard-display div {
+.wider-side-display {
+  width: 18rem;
+}
+
+.side-display div {
   display: inline-block;
   width: 100%;
 }
 
-.scoreboard-table {
+.table {
   border: 1px solid;
   border-collapse: collapse;
   width: 100%;
 }
 
-.scoreboard-table tr {
+.table tr {
   border-bottom: 1px solid black;
+}
+
+.table-text-small tr {
   font-size: 1.5rem;
-  width: 5rem;
+}
+
+.table-text-large tr {
+  font-size: 1.5rem;
+}
+
+.side-right {
+  right: 20vw;
+  transform: translate(50%, -50%);
+}
+
+.side-left {
+  left: 20vw;
+  transform: translate(-50%, -50%);
 }

@@ -17,14 +17,19 @@ const upgradeDisplay = document.querySelector("#upgradeDisplay");
 const upgradeOptions = document.querySelector("#upgradeOptions");
 const scoreboardDisplay = document.querySelector("#scoreboardDisplay");
 const scoreboardTable = document.querySelector("#scoreboardTable");
+const controlsDisplay = document.querySelector("#controlsDisplay");
 const aliasInput = document.querySelector("#aliasInput");
+const standardResolution = 1080 * 1920;
+const widnowResuliton = canvas.height * canvas.width;
+const screenSizeMultiplier = widnowResuliton / standardResolution;
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
-const projectileSpeed = 5;
-const playerMaxSpeed = 5;
-const playerAcceleration = 0.5;
+const projectileSpeed = 7 * screenSizeMultiplier;
+const playerMaxSpeed = 5 * screenSizeMultiplier;
+const playerAcceleration = 0.5 * screenSizeMultiplier;
 const particleFriction = 0.98;
-const enemyBaseSpeed = 2;
+const enemyBaseSpeed = 2 * screenSizeMultiplier;
+const particleSpeed = 6 * screenSizeMultiplier;
 const fps = 60;
 let startingExperiencePerLevel = 10;
 const experiencePerLevelMultiplier = 1.5;
@@ -83,6 +88,9 @@ function init() {
     projectiles = [];
     enemies = [];
     particles = [];
+    experiencePerKill.number = 5;
+    projectileDamage.number = 5;
+    superiority.number = 0;
     lives.number = startingLives;
     updateLife();
     score = 0;
@@ -141,15 +149,13 @@ function endGame() {
     clearInterval(animationIntervalID);
     gameOverDisplay.style.display = "flex";
     scoreboardDisplay.style.display = "flex";
+    controlsDisplay.style.display = "flex";
     statDisplay.style.display = "none";
     progressDisplay.style.display = "none";
     finalScoreElement.innerHTML = score.toString();
     removeEventListener("click", createProjectile);
     removeEventListener("keydown", onKeyDown);
     removeEventListener("blur", pause);
-    console.log("object");
-    // @ts-ignore
-    console.log({ name: aliasInput.value, score: score });
     // @ts-ignore
     let highScore = { name: aliasInput.value, score: score };
     highScoreList.push(highScore);
@@ -180,13 +186,12 @@ function projectileHittingEnemy(enemy, enemyIndex) {
         if (distance - enemy.radius - projectile.radius < 0) {
             for (let i = 0; i < enemy.radius * 2; i++) {
                 particles.push(new Particle(projectile.xPos, projectile.yPos, Math.random() * 2, enemy.colour, {
-                    x: (Math.random() - 0.5) * (Math.random() * 6),
-                    y: (Math.random() - 0.5) * (Math.random() * 6),
+                    x: (Math.random() - 0.5) * (Math.random() * particleSpeed),
+                    y: (Math.random() - 0.5) * (Math.random() * particleSpeed),
                 }));
             }
             if (enemy.minRadius >= 20) {
                 enemy.minRadius -= projectileDamage.number;
-                console.log(enemy.minRadius);
             }
             else {
                 updateExperience(experiencePoints + experiencePerKill.number);
@@ -321,6 +326,7 @@ startGameButton.addEventListener("click", () => {
     else {
         gameOverDisplay.style.display = "none";
         scoreboardDisplay.style.display = "none";
+        controlsDisplay.style.display = "none";
         statDisplay.style.display = "block";
         progressDisplay.style.display = "flex";
         init();
