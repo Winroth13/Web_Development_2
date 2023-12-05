@@ -7,54 +7,75 @@
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
+    <!-- Statisitiken i övre vänstra hörnet -->
     <div class="stat-display" id="statDisplay">
+      <!-- Poängvisaren -->
       <label id="scoreElement">Score: 0</label>
       <br />
+      <!-- Livräkanren -->
       <label id="lifeElement">Lives: 3</label>
     </div>
 
+    <!-- Pausskärm -->
     <div class="center-div pause-display" id="pauseDisplay">
       <div>
+        <!-- Meddeladne på skärmen -->
         <h1>Game paused</h1>
         <h3>Click to continue</h3>
       </div>
     </div>
 
+    <!-- Erfarenhetsmätare -->
     <div class="progress-div" id="progressDisplay">
-      <progress value="0" max="0" id="experienceBar"></progress>
+      <!-- Procentmätare för erfarenhet till nästa uppgradering -->
+      <progress value="0" max="100" id="experienceBar"></progress>
+      <!-- Meddelande som visas när man kan uppgradera -->
       <h3 id="upgradeMessage">Press Q to upgrade</h3>
     </div>
 
+    <!-- Start- och slutmeny -->
     <div class="center-div" id="gameOverDisplay">
       <div class="center-display">
+        <!-- Ditt slutliga resultat -->
         <h1 id="finalScoreElement">0</h1>
         <p>Points</p>
+        <!-- Användarnamnsruta -->
         <input id="aliasInput" type="text" placeholder="Username" />
+        <!-- Startknapp -->
         <div>
           <button id="startGameButton">Start Game</button>
         </div>
       </div>
     </div>
 
+    <!-- Uppgraderingsfönster -->
     <div class="center-div upgrade-display" id="upgradeDisplay">
       <div class="center-display">
+        <!-- Titel -->
         <h1>Upgrades</h1>
+        <!-- Lista med uppgraderingar -->
         <div class="upgrade-options" id="upgradeOptions"></div>
       </div>
     </div>
 
+    <!-- Topplistan -->
     <div class="side-div side-right" id="scoreboardDisplay">
       <div class="side-display">
+        <!-- Titel -->
         <h1>Highscores</h1>
+        <!-- Tabell med toppoäng -->
         <div>
           <table class="table table-text-large" id="scoreboardTable"></table>
         </div>
       </div>
     </div>
 
+    <!-- Kontrolllista -->
     <div class="side-div side-left" id="controlsDisplay">
       <div class="side-display wider-side-display">
+        <!-- Titel -->
         <h1>Controls</h1>
+        <!-- Lista med alla kontroller -->
         <table class="table table-text-small">
           <tr>
             <th>WASD or Arrow Keys</th>
@@ -75,9 +96,13 @@
         </table>
       </div>
     </div>
+
+    <!-- Det spelet ritas på -->
     <canvas></canvas>
+
+    <!-- All kod -->
+    <script src="dist/objects.js"></script>
+    <script src="dist/eventHandlers.js"></script>
+    <script src="dist/main.js"></script>
   </body>
-  <script src="dist/objects.js"></script>
-  <script src="dist/eventHandlers.js"></script>
-  <script src="dist/main.js"></script>
 </html>
