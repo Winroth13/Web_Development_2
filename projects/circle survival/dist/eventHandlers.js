@@ -63,7 +63,7 @@ function playerKeyboardInput() {
     else if (!moveUp && moveDown) {
         newTargetVelocity.y = playerMaxSpeed;
     }
-    // Kollar om spelaren ska färdas till vänster eller höger 
+    // Kollar om spelaren ska färdas till vänster eller höger
     if (moveLeft && !moveRight) {
         newTargetVelocity.x = -playerMaxSpeed;
     }
