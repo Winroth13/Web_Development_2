@@ -31,12 +31,20 @@ function onKeyUp(event) {
 // Genomför vad spelarens knapptryck gör
 function playerKeyboardInput() {
     // Kollar vart spelaren håller på att förflytta sig
-    let moveUp = pressedKeys.includes("w") || pressedKeys.includes("ArrowUp");
-    let moveDown = pressedKeys.includes("s") || pressedKeys.includes("ArrowDown");
-    let moveLeft = pressedKeys.includes("a") || pressedKeys.includes("ArrowLeft");
-    let moveRight = pressedKeys.includes("d") || pressedKeys.includes("ArrowRight");
+    let moveUp = pressedKeys.includes("w") ||
+        pressedKeys.includes("W") ||
+        pressedKeys.includes("ArrowUp");
+    let moveDown = pressedKeys.includes("s") ||
+        pressedKeys.includes("S") ||
+        pressedKeys.includes("ArrowDown");
+    let moveLeft = pressedKeys.includes("a") ||
+        pressedKeys.includes("A") ||
+        pressedKeys.includes("ArrowLeft");
+    let moveRight = pressedKeys.includes("d") ||
+        pressedKeys.includes("D") ||
+        pressedKeys.includes("ArrowRight");
     // Om "q" trycks ner
-    if (pressedKeys.includes("q")) {
+    if (pressedKeys.includes("q") || pressedKeys.includes("Q")) {
         // Menyn byter från öppen till stängd eller tvärt om
         openUpgradeMenu = !openUpgradeMenu;
         // Om menyn är öppen
